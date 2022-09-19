@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
 
     [Header("Forward movement stats")]
-    public float moveSpeed = 0.01f;
+    public float moveSpeed = 1f;
     public float turnSpeedReduction = 0.5f;
     public float backwardSpeedReduction = 0.5f;
 
@@ -20,8 +20,10 @@ public class PlayerController : MonoBehaviour {
     private Transform model;
     private float targetDriftAngle = 0f;
     private float currentDriftAngle = 0f;
+    private Rigidbody rb;
 
     void Start() {
+        this.rb = this.GetComponent<Rigidbody>();
         this.model = this.transform.Find("Model");
     }
 
@@ -38,15 +40,15 @@ public class PlayerController : MonoBehaviour {
         if (horizontal != 0 && !drifting) {
             speed *= this.turnSpeedReduction;
         }
-        Vector3 pos = this.transform.position;
-        Vector3 movement = this.transform.up *= speed;
+
         if (vertical > this.minimalInput) {
-            pos += movement;
+            this.rb.velocity = this.transform.up * speed;
         }
         else if (vertical < -this.minimalInput) {
-            pos -= movement * this.backwardSpeedReduction;
+            this.rb.velocity = -this.transform.up * speed * this.backwardSpeedReduction;
+        } else {
+            this.rb.velocity = Vector3.zero;
         }
-        this.transform.position = pos;
     }
 
     private void HandleHorizontalMovement(float horizontal, float vertical, bool drifting) {
@@ -62,7 +64,7 @@ public class PlayerController : MonoBehaviour {
         // Angle to model to make it look like it is drifting + lerping
         if (rotSpeed != 0) {
             this.transform.Rotate(0f, 0f, rotSpeed, Space.World);
-            if (drifting && vertical != 0) {
+            if (drifting && vertical != 0 && horizontal != 0) {
                 if (this.targetDriftAngle == 0f) {
                     this.targetDriftAngle = this.driftingRotationIncrease;
                     this.currentDriftAngle = 1f;
@@ -71,21 +73,19 @@ public class PlayerController : MonoBehaviour {
                 }
                 Vector3 euler = this.transform.rotation.eulerAngles;
                 this.model.transform.localRotation = Quaternion.Euler(euler.x, euler.y, horizontal * -this.currentDriftAngle);
-            } else {
+            } else if (!drifting) {
 
+                // When drifting stops align the car to the proper rotation
                 if (this.targetDriftAngle != 0f) {
                     this.targetDriftAngle = 0f;
                     this.transform.Rotate(0f, 0f, horizontal * -this.currentDriftAngle, Space.World);
                     this.model.transform.localRotation = Quaternion.Euler(Vector3.zero);
                 }
-                //if (this.targetDriftAngle != 0f) {
-                //    this.targetDriftAngle = 0f;
-                //} else if (this.currentDriftAngle > 0f) {
-                //    this.currentDriftAngle *= 2 - this.driftRotationLerp;
-                //}
-                //Vector3 euler = this.transform.rotation.eulerAngles;
-                //this.model.transform.localRotation = Quaternion.Euler(euler.x, euler.y, horizontal * -this.currentDriftAngle);
             }
+        } else if (drifting && this.targetDriftAngle != 0f) {
+            this.targetDriftAngle = 0f;
+            this.transform.Rotate(0f, 0f, horizontal * -this.currentDriftAngle, Space.World);
+            this.model.transform.localRotation = Quaternion.Euler(Vector3.zero);
         }
     }
 }
