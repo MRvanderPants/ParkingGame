@@ -21,9 +21,13 @@ public class PlayerController : MonoBehaviour {
     private float targetDriftAngle = 0f;
     private float currentDriftAngle = 0f;
     private Rigidbody rb;
+    private BoxCollider boxCollider;
+
+    private readonly List<Car> colliders = new List<Car>();
 
     void Start() {
         this.rb = this.GetComponent<Rigidbody>();
+        this.boxCollider = this.GetComponent<BoxCollider>();
         this.model = this.transform.Find("Model");
     }
 
@@ -33,6 +37,15 @@ public class PlayerController : MonoBehaviour {
         bool drifting = Input.GetButton("Fire1");
         this.HandleHorizontalMovement(horizontal, vertical, drifting);
         this.HandleVerticalMovement(horizontal, vertical, drifting);
+        this.CheckForCapture();
+    }
+
+    public void AddCollider(Car car) {
+        this.colliders.Add(car);
+    }
+
+    public void RemoveCollider(Car car) {
+        this.colliders.Remove(car);
     }
 
     private void HandleVerticalMovement(float horizontal, float vertical, bool drifting) {
@@ -52,6 +65,10 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void HandleHorizontalMovement(float horizontal, float vertical, bool drifting) {
+        if (vertical == 0) {
+            return;
+        }
+
         // Basic rotation logic
         float rotSpeed = 0f;
         if (horizontal < -this.minimalInput) {
@@ -86,6 +103,17 @@ public class PlayerController : MonoBehaviour {
             this.targetDriftAngle = 0f;
             this.transform.Rotate(0f, 0f, horizontal * -this.currentDriftAngle, Space.World);
             this.model.transform.localRotation = Quaternion.Euler(Vector3.zero);
+        }
+    }
+
+    private void CheckForCapture() {
+        for (int i = 0; i < this.colliders.Count; i++) {
+            Car car = this.colliders[i];
+            if (BoundsExtension.ContainBounds(this.boxCollider.bounds, car.bounds)) {
+                car.gameObject.GetComponent<MeshRenderer>().material.color = new Color32(255, 0, 0, 255);
+            } else {
+                car.gameObject.GetComponent<MeshRenderer>().material.color = new Color32(255, 255, 255, 255);
+            }
         }
     }
 }
