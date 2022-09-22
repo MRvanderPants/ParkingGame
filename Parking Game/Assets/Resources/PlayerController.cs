@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
+    public static PlayerController main;
+
     [Header("Forward movement stats")]
     public float moveSpeed = 1f;
     public float turnSpeedReduction = 0.5f;
@@ -24,6 +26,10 @@ public class PlayerController : MonoBehaviour {
     private BoxCollider boxCollider;
 
     private readonly List<Car> colliders = new List<Car>();
+
+    void Awake() {
+        PlayerController.main = this;
+    }
 
     void Start() {
         this.rb = this.GetComponent<Rigidbody>();
@@ -65,7 +71,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void HandleHorizontalMovement(float horizontal, float vertical, bool drifting) {
-        if (vertical == 0) {
+        if (vertical == 0 || this.rb.velocity == Vector3.zero) {
             return;
         }
 
