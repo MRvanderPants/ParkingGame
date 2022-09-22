@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour {
     private float currentDriftAngle = 0f;
     private Rigidbody rb;
     private BoxCollider boxCollider;
+    private Car capturedCar;
 
     private readonly List<Car> colliders = new List<Car>();
 
@@ -38,6 +39,10 @@ public class PlayerController : MonoBehaviour {
     }
 
     void Update() {
+        if (this.capturedCar != null) {
+            return;
+        }
+
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
         bool drifting = Input.GetButton("Fire1");
@@ -113,13 +118,33 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void CheckForCapture() {
+        if (this.capturedCar != null) {
+            return;
+        }
+
         for (int i = 0; i < this.colliders.Count; i++) {
             Car car = this.colliders[i];
-            if (BoundsExtension.ContainBounds(this.boxCollider.bounds, car.bounds)) {
-                car.gameObject.GetComponent<MeshRenderer>().material.color = new Color32(255, 0, 0, 255);
-            } else {
-                car.gameObject.GetComponent<MeshRenderer>().material.color = new Color32(255, 255, 255, 255);
+            Vector3 myPos = this.transform.position; myPos.z = 0f;
+            Vector3 carPos = car.transform.position; carPos.z = 0f;
+            float distance = Vector3.Distance(myPos, carPos);
+            if (distance < 0.5f) {
+                this.CaptureCar(car);
             }
         }
+    }
+
+    private void CaptureCar(Car car) {
+        this.rb.velocity = Vector3.zero;
+        this.capturedCar = car;
+        car.captured = true;
+        car.transform.position = this.transform.position;
+        car.transform.rotation = this.transform.rotation;
+
+        new TimedTrigger(5f, () => {
+            this.capturedCar.Release();
+            new TimedTrigger(0.5f, () => {
+                this.capturedCar = null;
+            });
+        });
     }
 }
