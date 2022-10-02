@@ -9,11 +9,14 @@ public class Car : MonoBehaviour {
 
     public float movementSpeed = 2f;
     public bool captured;
+    public TrafficRouteType routeType = TrafficRouteType.Default;
 
     private BoxCollider boxCollider;
+    private Vector3[] initialRoute;
     private Vector3[] route;
     private float startTime = -1f;
     private float journeyLength;
+    private bool startPointRemoved = false;
     private Action onDestroy;
 
     private void Update() {
@@ -35,8 +38,19 @@ public class Car : MonoBehaviour {
                 if (this.route.Length > 0) {
                     this.StartNextNode();
                 } else {
-                    this.onDestroy?.Invoke();
-                    Destroy(this.gameObject);
+                    if (this.routeType == TrafficRouteType.Target) {
+                        List<Vector3> list = new List<Vector3>();
+                        list.AddRange(this.initialRoute);
+                        if (!this.startPointRemoved) {
+                            list.RemoveAt(0);
+                            this.startPointRemoved = true;
+                        }
+                        this.SetRoute(list.ToArray(), this.onDestroy, this.routeType);
+                    }
+                    else {
+                        this.onDestroy?.Invoke();
+                        Destroy(this.gameObject);
+                    }
                 }
             }
         }
@@ -54,12 +68,19 @@ public class Car : MonoBehaviour {
         }
     }
 
-    public void SetRoute(Vector3[] route, Action onDestroy) {
+    public void SetRoute(Vector3[] route, Action onDestroy, TrafficRouteType routeType = TrafficRouteType.Default) {
         this.boxCollider = this.GetComponent<BoxCollider>();
         this.bounds = this.boxCollider.bounds;
+        this.initialRoute = route;
         this.route = route;
+        this.routeType = routeType;
+        this.onDestroy = onDestroy;
         this.transform.position = this.route[0];
         this.StartNextNode();
+
+        if (this.routeType == TrafficRouteType.Target) {
+            this.transform.Find("Model").GetComponent<MeshRenderer>().material.color = new Color32(255, 0, 0, 255);
+        }
     }
 
     public void Release() {

@@ -2,11 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum TrafficRouteType {
+    Default,
+    Target,
+}
+
 [ExecuteInEditMode]
 public class TrafficRoute : MonoBehaviour {
 
     public float minimalSpawnTime = 2f;
     public Transform[] nodes;
+    public TrafficRouteType routeType = TrafficRouteType.Default;
 
     private LineRenderer lineRenderer;
     private Transform start;
@@ -19,7 +25,7 @@ public class TrafficRoute : MonoBehaviour {
             this.carPrefab = Resources.Load<GameObject>("Prefabs/Car");
             new TimedTrigger(this.minimalSpawnTime, () => {
                 this.SpawnCar();
-            }, true);
+            });
         }
     }
 
@@ -51,6 +57,9 @@ public class TrafficRoute : MonoBehaviour {
                 this.nodes[i].GetComponent<MeshRenderer>().enabled = false;
             }
         } else {
+            if (this.routeType == TrafficRouteType.Target) {
+                this.lineRenderer.material.color = new Color32(255, 0, 0, 255);
+            }
             this.lineRenderer.enabled = true;
             this.start.GetComponent<MeshRenderer>().enabled = true;
             this.end.GetComponent<MeshRenderer>().enabled = true;
@@ -58,6 +67,7 @@ public class TrafficRoute : MonoBehaviour {
 
         this.lineRenderer.positionCount = this.nodes.Length + 2;
         this.positions = new List<Vector3>();
+
         this.positions.Add(this.start.position);
         for (int i = 0; i < this.nodes.Length; i++) {
             this.positions.Add(this.nodes[i].position);
@@ -65,7 +75,11 @@ public class TrafficRoute : MonoBehaviour {
                 this.nodes[i].GetComponent<MeshRenderer>().enabled = true;
             }
         }
-        this.positions.Add(this.end.position);
+        if (this.routeType != TrafficRouteType.Target) {
+            this.positions.Add(this.end.position);
+        } else {
+            this.positions.Add(this.nodes[0].position);
+        }
         this.lineRenderer.SetPositions(this.positions.ToArray());
     }
 
@@ -76,6 +90,6 @@ public class TrafficRoute : MonoBehaviour {
             new TimedTrigger(r, () => {
                 this.SpawnCar();
             });
-        });
+        }, this.routeType);
     }
 }

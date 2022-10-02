@@ -140,7 +140,11 @@ public class PlayerController : MonoBehaviour {
         car.transform.position = this.transform.position;
         car.transform.rotation = this.transform.rotation;
 
-        new TimedTrigger(5f, () => {
+        if (car.routeType == TrafficRouteType.Target) {
+            Debug.Log("Captured target car");
+        }
+
+        TimerUI.main.StartTimer(5f, () => {
             this.capturedCar.Release();
             new TimedTrigger(0.5f, () => {
                 this.capturedCar = null;
