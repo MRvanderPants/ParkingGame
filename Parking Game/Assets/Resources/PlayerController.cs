@@ -118,12 +118,13 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void CheckForCapture() {
-        if (this.capturedCar != null) {
+        if (this.capturedCar != null || this.transform == null) {
             return;
         }
 
         for (int i = 0; i < this.colliders.Count; i++) {
             Car car = this.colliders[i];
+            if (car == null) { return; }
             Vector3 myPos = this.transform.position; myPos.z = 0f;
             Vector3 carPos = car.transform.position; carPos.z = 0f;
             float distance = Vector3.Distance(myPos, carPos);
@@ -138,17 +139,26 @@ public class PlayerController : MonoBehaviour {
         this.capturedCar = car;
         car.captured = true;
         car.transform.position = this.transform.position;
-        car.transform.rotation = this.transform.rotation;
+        Transform model = car.transform.Find("Model");
+        //car.transform.rotation = this.transform.rotation;
 
         if (car.routeType == TrafficRouteType.Target) {
             Debug.Log("Captured target car");
-        }
-
-        TimerUI.main.StartTimer(5f, () => {
-            this.capturedCar.Release();
-            new TimedTrigger(0.5f, () => {
-                this.capturedCar = null;
+            TimerUI.main.StartTimer(0.5f, () => {
+                this.ReleaseCar();
+                GameController.main.Next();
             });
+        } else {
+            TimerUI.main.StartTimer(5f, () => {
+                this.ReleaseCar();
+            });
+        }
+    }
+
+    private void ReleaseCar() {
+        this.capturedCar.Release();
+        new TimedTrigger(0.5f, () => {
+            this.capturedCar = null;
         });
     }
 }

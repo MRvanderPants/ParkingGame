@@ -115,7 +115,9 @@ MonoBehaviour:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
   movementSpeed: 0.05
+  fadeOutSpeed: 1
   captured: 0
+  released: 0
   routeType: 0
 --- !u!1 &5219979722699497039
 GameObject:

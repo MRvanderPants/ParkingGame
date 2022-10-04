@@ -23,15 +23,30 @@ public class TrafficRoute : MonoBehaviour {
     void Start() {
         if (Application.isPlaying) {
             this.carPrefab = Resources.Load<GameObject>("Prefabs/Car");
-            new TimedTrigger(this.minimalSpawnTime, () => {
-                this.SpawnCar();
-            });
+            if (this.routeType != TrafficRouteType.Target) {
+                new TimedTrigger(this.minimalSpawnTime, () => {
+                    this.SpawnCar();
+                });
+            }
         }
     }
 
     void Update() {
         this.FetchObjects();
         this.DrawLine();
+    }
+
+    public void SpawnCar() {
+        GameObject car = Instantiate(this.carPrefab);
+        car.GetComponent<Car>().SetRoute(this.positions.ToArray(), () => {
+            if (this.routeType == TrafficRouteType.Target) {
+                return;
+            }
+            float r = UnityEngine.Random.Range(this.minimalSpawnTime, this.minimalSpawnTime * 2f);
+            new TimedTrigger(r, () => {
+                this.SpawnCar();
+            });
+        }, this.routeType);
     }
 
     private void FetchObjects() {
@@ -58,7 +73,7 @@ public class TrafficRoute : MonoBehaviour {
             }
         } else {
             if (this.routeType == TrafficRouteType.Target) {
-                this.lineRenderer.material.color = new Color32(255, 0, 0, 255);
+                this.lineRenderer.sharedMaterial.color = new Color32(255, 0, 0, 255);
             }
             this.lineRenderer.enabled = true;
             this.start.GetComponent<MeshRenderer>().enabled = true;
@@ -81,15 +96,5 @@ public class TrafficRoute : MonoBehaviour {
             this.positions.Add(this.nodes[0].position);
         }
         this.lineRenderer.SetPositions(this.positions.ToArray());
-    }
-
-    private void SpawnCar() {
-        GameObject car = Instantiate(this.carPrefab);
-        car.GetComponent<Car>().SetRoute(this.positions.ToArray(), () => {
-            float r = UnityEngine.Random.Range(this.minimalSpawnTime, this.minimalSpawnTime * 2f);
-            new TimedTrigger(r, () => {
-                this.SpawnCar();
-            });
-        }, this.routeType);
     }
 }

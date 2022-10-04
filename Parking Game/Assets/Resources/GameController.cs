@@ -8,19 +8,34 @@ public class GameController : MonoBehaviour {
 
     public GoalData[] minigames;
 
+    private LevelController controller;
+    private readonly List<GoalData> minigameSelection = new List<GoalData>();
+
+    public GoalData CurrentGoal {
+        get => this.minigameSelection[0];
+    }
+
     void Awake() {
         GameController.main = this;
     }
 
-    void Start() {
-        
-    }
-
     public void StartGame(LevelController controller) {
-        this.StartLevel(this.minigames, controller);
+        this.controller = controller;
+        this.StartLevel(this.minigames);
     }
 
-    private void StartLevel(GoalData[] minigames, LevelController controller) {
-        controller.StartLevel(minigames[0]);
+    public void Next() {
+        this.minigameSelection.RemoveAt(0);
+        if (this.minigameSelection.Count <= 0) {
+            this.controller.FinishLevel(true);
+            return;
+        }
+        controller.StartLevel(this.minigameSelection[0]);
+    }
+
+    private void StartLevel(GoalData[] minigames) {
+        this.minigameSelection.Clear();
+        this.minigameSelection.AddRange(minigames);
+        this.controller.StartLevel(minigames[0]);
     }
 }
