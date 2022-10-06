@@ -38,6 +38,9 @@ public class TrafficRoute : MonoBehaviour {
 
     public void SpawnCar() {
         GameObject car = Instantiate(this.carPrefab);
+        if (this.positions.Count <= 0) {
+            return;
+        }
         car.GetComponent<Car>().SetRoute(this.positions.ToArray(), () => {
             if (this.routeType == TrafficRouteType.Target) {
                 return;

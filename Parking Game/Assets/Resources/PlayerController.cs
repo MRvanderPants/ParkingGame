@@ -23,10 +23,14 @@ public class PlayerController : MonoBehaviour {
     private float targetDriftAngle = 0f;
     private float currentDriftAngle = 0f;
     private Rigidbody rb;
-    private BoxCollider boxCollider;
     private Car capturedCar;
+    private bool isDrifting = false;
 
     private readonly List<Car> colliders = new List<Car>();
+
+    public bool Difting {
+        get => this.isDrifting && this.currentDriftAngle > Mathf.Abs(this.driftingRotationIncrease * 0.33f);
+    }
 
     void Awake() {
         PlayerController.main = this;
@@ -34,7 +38,6 @@ public class PlayerController : MonoBehaviour {
 
     void Start() {
         this.rb = this.GetComponent<Rigidbody>();
-        this.boxCollider = this.GetComponent<BoxCollider>();
         this.model = this.transform.Find("Model");
     }
 
@@ -45,9 +48,9 @@ public class PlayerController : MonoBehaviour {
 
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
-        bool drifting = Input.GetButton("Fire1");
-        this.HandleHorizontalMovement(horizontal, vertical, drifting);
-        this.HandleVerticalMovement(horizontal, vertical, drifting);
+        this.isDrifting = Input.GetButton("Fire1");
+        this.HandleHorizontalMovement(horizontal, vertical, this.isDrifting);
+        this.HandleVerticalMovement(horizontal, vertical, this.isDrifting);
         this.CheckForCapture();
     }
 
@@ -124,7 +127,7 @@ public class PlayerController : MonoBehaviour {
 
         for (int i = 0; i < this.colliders.Count; i++) {
             Car car = this.colliders[i];
-            if (car == null) { return; }
+            if (car == null || car.GetComponent<Car>().released) { return; }
             Vector3 myPos = this.transform.position; myPos.z = 0f;
             Vector3 carPos = car.transform.position; carPos.z = 0f;
             float distance = Vector3.Distance(myPos, carPos);

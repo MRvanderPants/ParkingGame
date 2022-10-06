@@ -26,9 +26,9 @@ public class Car : MonoBehaviour {
         if (!this.captured && this.startTime != -1f) {
             this.HandleMovement();
         }
-        if (this.released) {
-            this.HandleFadeOut();
-        }
+        //if (this.released) {
+        //    this.HandleFadeOut();
+        //}
     }
 
     public void OnTriggerEnter(Collider other) {
@@ -64,6 +64,10 @@ public class Car : MonoBehaviour {
         this.captured = false;
         new TimedTrigger(0.5f, () => {
             this.released = true;
+            ModelFadeOut fader = this.gameObject.AddComponent<ModelFadeOut>();
+            fader.Init(this.material, () => {
+                this.onDestroy?.Invoke();
+            });
         });
         this.StartNextNode();
     }
