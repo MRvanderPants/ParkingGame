@@ -11,8 +11,12 @@ public class GameController : MonoBehaviour {
     private LevelController controller;
     private readonly List<GoalData> minigameSelection = new List<GoalData>();
 
+    public bool Ready {
+        get => this.minigameSelection.Count > 0;
+    }
+
     public GoalData CurrentGoal {
-        get => this.minigameSelection[0];
+        get => this.minigameSelection.Count > 0 ? this.minigameSelection[0] : null;
     }
 
     void Awake() {

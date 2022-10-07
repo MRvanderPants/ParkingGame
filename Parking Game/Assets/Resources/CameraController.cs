@@ -7,16 +7,17 @@ public class CameraController : MonoBehaviour {
     public float minimumRenderDistance = 30f;
     public float viewportCutoff = 0.4f;
 
-    private PlayerController playerController;
     private Camera mainCamera;
 
     void Start() {
-        this.playerController = PlayerController.main;
         this.mainCamera = this.GetComponent<Camera>();
     }
 
     void Update() {
-        Vector3 playerPos = this.playerController.transform.position;
+        if (PlayerController.main == null) {
+            return;
+        }
+        Vector3 playerPos = PlayerController.main.transform.position;
         playerPos.z = this.transform.position.z;
         var journeyLength = Vector3.Distance(this.transform.position, playerPos);
         float fractionOfJourney = Time.time / journeyLength;

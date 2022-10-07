@@ -24,15 +24,21 @@ public class LevelController : MonoBehaviour {
     private TargetPanelUI targetPanelUI;
 
     private TrafficRoute[] targetRoutes;
+    private PlayerController playerController;
 
     void Start() {
         this.goalPanelUI = this.transform.Find("GoalPanel").GetComponent<GoalPanelUI>();
         this.targetPanelUI = this.transform.Find("TargetPanel").GetComponent<TargetPanelUI>();
         this.FindAllTargetRoutes();
+    }
+
+    public void StartGame() {
+        UIController.main.ToggleMainMenu(false);
         GameController.main.StartGame(this);
     }
 
     public void StartLevel(GoalData goalData) {
+        this.CreatePlayer();
         new TimedTrigger(0.05f, () => {
             this.targetPanelUI.SetTarget(goalData);
             this.ActivateRandomTargetRoute();
@@ -60,5 +66,10 @@ public class LevelController : MonoBehaviour {
     private void ActivateRandomTargetRoute() {
         int r = UnityEngine.Random.Range(0, this.targetRoutes.Length);
         this.targetRoutes[r].SpawnCar();
+    }
+
+    private void CreatePlayer() {
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/ParkingSpot");
+        Instantiate(prefab);
     }
 }

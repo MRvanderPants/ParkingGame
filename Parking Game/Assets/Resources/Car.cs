@@ -44,7 +44,6 @@ public class Car : MonoBehaviour {
     }
 
     public void SetRoute(Vector3[] route, Action onDestroy, TrafficRouteType routeType = TrafficRouteType.Default) {
-        GoalData goalData = GameController.main.CurrentGoal;
         this.boxCollider = this.GetComponent<BoxCollider>();
         this.bounds = this.boxCollider.bounds;
         this.initialRoute = route;
@@ -55,7 +54,8 @@ public class Car : MonoBehaviour {
         this.material = this.transform.Find("Model").GetComponent<MeshRenderer>().material;
         this.StartNextNode();
 
-        if (this.routeType == TrafficRouteType.Target) {
+        GoalData goalData = GameController.main.CurrentGoal;
+        if (this.routeType == TrafficRouteType.Target && goalData != null) {
             this.material.color = goalData.targetColour;
         }
     }
