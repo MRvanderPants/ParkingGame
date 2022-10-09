@@ -34,11 +34,11 @@ public class LevelController : MonoBehaviour {
 
     public void StartGame() {
         UIController.main.ToggleMainMenu(false);
+        this.CreatePlayer();
         GameController.main.StartGame(this);
     }
 
     public void StartLevel(GoalData goalData) {
-        this.CreatePlayer();
         new TimedTrigger(0.05f, () => {
             this.targetPanelUI.SetTarget(goalData);
             this.ActivateRandomTargetRoute();
