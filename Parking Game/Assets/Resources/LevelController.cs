@@ -7,6 +7,7 @@ public enum GoalType {
     CaptureColour,
     Stealth,
     Ticket,
+    CarMoving,
 };
 
 [System.Serializable]
@@ -20,15 +21,25 @@ public class GoalData {
 
 public class LevelController : MonoBehaviour {
 
+    public static LevelController main;
+
+    private GoalData goalData;
     private GoalPanelUI goalPanelUI;
     private TargetPanelUI targetPanelUI;
-
     private TrafficRoute[] targetRoutes;
-    private PlayerController playerController;
+
+    public GoalData CurrentGoalData {
+        get => null as GoalData;
+    }
+
+    void Awake() {
+        LevelController.main = this;
+    }
 
     void Start() {
         this.goalPanelUI = this.transform.Find("GoalPanel").GetComponent<GoalPanelUI>();
         this.targetPanelUI = this.transform.Find("TargetPanel").GetComponent<TargetPanelUI>();
+        this.goalData = this.GenerateGoalData();
         this.FindAllTargetRoutes();
     }
 
@@ -38,11 +49,12 @@ public class LevelController : MonoBehaviour {
         GameController.main.StartGame(this);
     }
 
-    public void StartLevel(GoalData goalData) {
+    public void StartLevel() {
+        this.goalData = this.GenerateGoalData();
         new TimedTrigger(0.05f, () => {
-            this.targetPanelUI.SetTarget(goalData);
+            this.targetPanelUI.SetTarget(this.goalData);
             this.ActivateRandomTargetRoute();
-            this.goalPanelUI.StartTimer(goalData, (bool result) => {
+            this.goalPanelUI.StartTimer(this.goalData, (bool result) => {
                 this.FinishLevel(result);
             });
         });
@@ -50,6 +62,11 @@ public class LevelController : MonoBehaviour {
 
     public void FinishLevel(bool result) {
         Debug.Log("Ended in " + result);
+        UIController.main.ToggleMainMenu(true);
+        for (int i = 0; i < this.targetRoutes.Length; i++) {
+            this.targetRoutes[i].RemoveAllCars();
+        }
+        Destroy(PlayerController.main.gameObject);
     }
 
     private void FindAllTargetRoutes() {
@@ -71,5 +88,33 @@ public class LevelController : MonoBehaviour {
     private void CreatePlayer() {
         GameObject prefab = Resources.Load<GameObject>("Prefabs/ParkingSpot");
         Instantiate(prefab);
+    }
+
+    private GoalData GenerateGoalData() {
+        return new GoalData() {
+            goalType = this.GenerateGoalType(),
+            value = 0,
+            timeLimit = UnityEngine.Random.Range(20, 30), // TODO replace
+            targetPrefab = Resources.Load<GameObject>("Prefabs/Car"),
+            targetColour = this.GenerateColor(),
+        };
+    }
+
+    private GoalType GenerateGoalType() {
+        int r = UnityEngine.Random.Range(0, 4);
+        switch (r) {
+            case 0: return GoalType.CaptureColour;
+            case 1: return GoalType.Stealth;
+            case 2: return GoalType.Ticket;
+            case 3:
+            default: return GoalType.CaptureTarget;
+        }
+    }
+
+    private Color32 GenerateColor() {
+        byte r = (byte)UnityEngine.Random.Range(0, 255);
+        byte g = (byte)UnityEngine.Random.Range(0, 255);
+        byte b = (byte)UnityEngine.Random.Range(0, 255);
+        return new Color32(r, g, b, 255);
     }
 }

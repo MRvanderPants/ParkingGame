@@ -26,9 +26,6 @@ public class Car : MonoBehaviour {
         if (!this.captured && this.startTime != -1f) {
             this.HandleMovement();
         }
-        //if (this.released) {
-        //    this.HandleFadeOut();
-        //}
     }
 
     public void OnTriggerEnter(Collider other) {
@@ -54,7 +51,7 @@ public class Car : MonoBehaviour {
         this.material = this.transform.Find("Model").GetComponent<MeshRenderer>().material;
         this.StartNextNode();
 
-        GoalData goalData = GameController.main.CurrentGoal;
+        GoalData goalData = LevelController.main.CurrentGoalData;
         if (this.routeType == TrafficRouteType.Target && goalData != null) {
             this.material.color = goalData.targetColour;
         }
@@ -116,16 +113,6 @@ public class Car : MonoBehaviour {
                     this.Kill();
                 }
             }
-        }
-    }
-
-    private void HandleFadeOut() {
-        Color32 col = this.material.color;
-        col.a -= this.fadeOutSpeed;
-        this.material.color = col;
-
-        if (col.a <= 0) {
-            this.Kill();  
         }
     }
 }

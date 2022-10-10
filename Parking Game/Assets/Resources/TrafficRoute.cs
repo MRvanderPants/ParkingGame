@@ -20,6 +20,8 @@ public class TrafficRoute : MonoBehaviour {
     private GameObject carPrefab;
     private List<Vector3> positions;
 
+    private readonly List<Car> cars = new List<Car>();
+
     void Start() {
         if (Application.isPlaying) {
             this.carPrefab = Resources.Load<GameObject>("Prefabs/Car");
@@ -47,6 +49,13 @@ public class TrafficRoute : MonoBehaviour {
                 this.SpawnCar();
             });
         }, this.routeType);
+    }
+
+    public void RemoveAllCars() {
+        for (int i = 0; i < this.cars.Count; i++) {
+            this.cars[i].Release();
+        }
+        this.cars.Clear();
     }
 
     private void FetchObjects() {
