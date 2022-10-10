@@ -587,6 +587,7 @@ GameObject:
   - component: {fileID: 219563218}
   - component: {fileID: 219563217}
   - component: {fileID: 219563220}
+  - component: {fileID: 219563221}
   m_Layer: 5
   m_Name: QuitButton
   m_TagString: Untagged
@@ -639,10 +640,10 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.7372549, g: 0.15686275, b: 0.5254902, a: 1}
-    m_SelectedColor: {r: 0.7372549, g: 0.15686275, b: 0.5254902, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_PressedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_SelectedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -714,10 +715,96 @@ MonoBehaviour:
   defaultColor:
     serializedVersion: 2
     rgba: 4281150765
+  hoverColor:
+    serializedVersion: 2
+    rgba: 4286982332
+  pressedColor:
+    serializedVersion: 2
+    rgba: 4284162173
+  disabledColor:
+    serializedVersion: 2
+    rgba: 4287922335
   images:
   - {fileID: 1389076202}
   - {fileID: 738801616}
   - {fileID: 219563218}
+--- !u!114 &219563221
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219563215}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 219563220}
+          m_TargetAssemblyTypeName: UIAlignColourWithButton, Assembly-CSharp
+          m_MethodName: ApplyHover
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 219563220}
+          m_TargetAssemblyTypeName: UIAlignColourWithButton, Assembly-CSharp
+          m_MethodName: ApplyDefault
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 219563220}
+          m_TargetAssemblyTypeName: UIAlignColourWithButton, Assembly-CSharp
+          m_MethodName: ApplyPressed
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 219563220}
+          m_TargetAssemblyTypeName: UIAlignColourWithButton, Assembly-CSharp
+          m_MethodName: ApplyDefault
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &235048914
 GameObject:
   m_ObjectHideFlags: 0
@@ -3275,6 +3362,7 @@ GameObject:
   - component: {fileID: 919220811}
   - component: {fileID: 919220810}
   - component: {fileID: 919220809}
+  - component: {fileID: 919220813}
   m_Layer: 5
   m_Name: SettingsButton
   m_TagString: Untagged
@@ -3320,6 +3408,15 @@ MonoBehaviour:
   defaultColor:
     serializedVersion: 2
     rgba: 4281150765
+  hoverColor:
+    serializedVersion: 2
+    rgba: 4286982332
+  pressedColor:
+    serializedVersion: 2
+    rgba: 4284162173
+  disabledColor:
+    serializedVersion: 2
+    rgba: 4287922335
   images:
   - {fileID: 585133084}
   - {fileID: 1317537522}
@@ -3346,10 +3443,10 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.7372549, g: 0.15686275, b: 0.5254902, a: 1}
-    m_SelectedColor: {r: 0.7372549, g: 0.15686275, b: 0.5254902, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_PressedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_SelectedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -3406,6 +3503,83 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919220807}
   m_CullTransparentMesh: 1
+--- !u!114 &919220813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919220807}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 919220809}
+          m_TargetAssemblyTypeName: UIAlignColourWithButton, Assembly-CSharp
+          m_MethodName: ApplyHover
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 919220809}
+          m_TargetAssemblyTypeName: UIAlignColourWithButton, Assembly-CSharp
+          m_MethodName: ApplyDefault
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 919220809}
+          m_TargetAssemblyTypeName: UIAlignColourWithButton, Assembly-CSharp
+          m_MethodName: ApplyPressed
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 919220809}
+          m_TargetAssemblyTypeName: UIAlignColourWithButton, Assembly-CSharp
+          m_MethodName: ApplyDefault
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -3882,9 +4056,9 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1032009385}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1.0000001}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1675480051}
@@ -3892,7 +4066,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 72, y: 300}
+  m_AnchoredPosition: {x: 71.99998, y: 300.00003}
   m_SizeDelta: {x: 788, y: 108}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1032009387
@@ -5428,6 +5602,7 @@ GameObject:
   - component: {fileID: 1427865073}
   - component: {fileID: 1427865072}
   - component: {fileID: 1427865071}
+  - component: {fileID: 1427865075}
   m_Layer: 5
   m_Name: PlayButton
   m_TagString: Untagged
@@ -5473,6 +5648,15 @@ MonoBehaviour:
   defaultColor:
     serializedVersion: 2
     rgba: 4281150765
+  hoverColor:
+    serializedVersion: 2
+    rgba: 4286982332
+  pressedColor:
+    serializedVersion: 2
+    rgba: 4284162173
+  disabledColor:
+    serializedVersion: 2
+    rgba: 4287922335
   images:
   - {fileID: 1542137951}
   - {fileID: 1592757832}
@@ -5499,10 +5683,10 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.7372549, g: 0.15686275, b: 0.5254902, a: 1}
-    m_SelectedColor: {r: 0.7372549, g: 0.15686275, b: 0.5254902, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_PressedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_SelectedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -5571,6 +5755,83 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1427865069}
   m_CullTransparentMesh: 1
+--- !u!114 &1427865075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1427865069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1427865071}
+          m_TargetAssemblyTypeName: UIAlignColourWithButton, Assembly-CSharp
+          m_MethodName: ApplyHover
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1427865071}
+          m_TargetAssemblyTypeName: UIAlignColourWithButton, Assembly-CSharp
+          m_MethodName: ApplyDefault
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1427865071}
+          m_TargetAssemblyTypeName: UIAlignColourWithButton, Assembly-CSharp
+          m_MethodName: ApplyPressed
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1427865071}
+          m_TargetAssemblyTypeName: UIAlignColourWithButton, Assembly-CSharp
+          m_MethodName: ApplyDefault
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1470980907
 GameObject:
   m_ObjectHideFlags: 0
@@ -7160,6 +7421,7 @@ GameObject:
   - component: {fileID: 1898274411}
   - component: {fileID: 1898274410}
   - component: {fileID: 1898274409}
+  - component: {fileID: 1898274413}
   m_Layer: 5
   m_Name: VersusButton
   m_TagString: Untagged
@@ -7205,6 +7467,15 @@ MonoBehaviour:
   defaultColor:
     serializedVersion: 2
     rgba: 4281150765
+  hoverColor:
+    serializedVersion: 2
+    rgba: 4286982332
+  pressedColor:
+    serializedVersion: 2
+    rgba: 4284162173
+  disabledColor:
+    serializedVersion: 2
+    rgba: 4287922335
   images:
   - {fileID: 853994748}
   - {fileID: 1295801136}
@@ -7231,10 +7502,10 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.7372549, g: 0.15686275, b: 0.5254902, a: 1}
-    m_SelectedColor: {r: 0.7372549, g: 0.15686275, b: 0.5254902, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_HighlightedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_PressedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_SelectedColor: {r: 1, g: 1, b: 1, a: 1}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -7291,6 +7562,83 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1898274407}
   m_CullTransparentMesh: 1
+--- !u!114 &1898274413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1898274407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1898274409}
+          m_TargetAssemblyTypeName: UIAlignColourWithButton, Assembly-CSharp
+          m_MethodName: ApplyHover
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1898274409}
+          m_TargetAssemblyTypeName: UIAlignColourWithButton, Assembly-CSharp
+          m_MethodName: ApplyDefault
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 2
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1898274409}
+          m_TargetAssemblyTypeName: UIAlignColourWithButton, Assembly-CSharp
+          m_MethodName: ApplyPressed
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 3
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1898274409}
+          m_TargetAssemblyTypeName: UIAlignColourWithButton, Assembly-CSharp
+          m_MethodName: ApplyDefault
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1913111623
 GameObject:
   m_ObjectHideFlags: 0
