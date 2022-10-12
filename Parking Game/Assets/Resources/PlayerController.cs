@@ -143,7 +143,8 @@ public class PlayerController : MonoBehaviour {
         car.captured = true;
         car.transform.position = this.transform.position;
         Transform model = car.transform.Find("Model");
-        //car.transform.rotation = this.transform.rotation;
+
+        CameraController.main.Shake(0.5f, 0.25f, 2f);
 
         if (car.routeType == TrafficRouteType.Target) {
             Debug.Log("Captured target car");
@@ -163,5 +164,11 @@ public class PlayerController : MonoBehaviour {
         new TimedTrigger(0.5f, () => {
             this.capturedCar = null;
         });
+    }
+
+    private void OnCollisionEnter(Collision collision) {
+        if (collision.collider.gameObject.tag == "environment") {
+            CameraController.main.Shake(0.5f, 0.25f, 4f);
+        }
     }
 }

@@ -4,12 +4,23 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour {
 
+    public static CameraController main;
+
     public float minimumRenderDistance = 30f;
     public float viewportCutoff = 0.4f;
 
     private Camera mainCamera;
+    private Transform wrapper;
+    private float shake = 0f;
+    private float shakeAmount = 0.5f;
+    private float decreaseFactor = 1.25f;
+
+    void Awake() {
+        CameraController.main = this;
+    }
 
     void Start() {
+        this.wrapper = this.transform.parent;
         this.mainCamera = this.GetComponent<Camera>();
     }
 
@@ -17,17 +28,14 @@ public class CameraController : MonoBehaviour {
         if (PlayerController.main == null) {
             return;
         }
-        Vector3 playerPos = PlayerController.main.transform.position;
-        playerPos.z = this.transform.position.z;
-        var journeyLength = Vector3.Distance(this.transform.position, playerPos);
-        float fractionOfJourney = Time.time / journeyLength;
-        if (float.IsNaN(fractionOfJourney)) {
-            fractionOfJourney = 0f;
-        }
-        this.transform.position = Vector3.Lerp(this.transform.position, playerPos, fractionOfJourney);
-        if (journeyLength > 0.1f) {
-            this.HandleVisibility();
-        }
+        this.HandleMovement();
+        this.HandleShake();
+    }
+
+    public void Shake(float duration, float amount = 0.5f, float decreaseFactor = 1.25f) {
+        this.shakeAmount = amount;
+        this.decreaseFactor = decreaseFactor;
+        this.shake = duration;
     }
 
     private void HandleVisibility() {
@@ -47,5 +55,29 @@ public class CameraController : MonoBehaviour {
         float max = 1 + this.viewportCutoff;
         bool isEnabled = viewPos.x >= min && viewPos.x <= max && viewPos.y >= min && viewPos.y <= max && viewPos.z > 0;
         obj.GetComponent<Renderer>().enabled = isEnabled;
+    }
+
+    private void HandleMovement() {
+        Vector3 playerPos = PlayerController.main.transform.position;
+        playerPos.z = this.wrapper.position.z;
+        var journeyLength = Vector3.Distance(this.wrapper.position, playerPos);
+        float fractionOfJourney = Time.time / journeyLength;
+        if (float.IsNaN(fractionOfJourney)) {
+            fractionOfJourney = 0f;
+        }
+        this.wrapper.position = Vector3.Lerp(this.wrapper.position, playerPos, fractionOfJourney);
+        if (journeyLength > 0.1f) {
+            this.HandleVisibility();
+        }
+    }
+
+    private void HandleShake() {
+        if (this.shake > 0f) {
+            this.mainCamera.transform.localPosition = Random.insideUnitSphere * shakeAmount;
+            shake -= Time.deltaTime * decreaseFactor;
+        }
+        else {
+            this.shake = 0f;
+        }
     }
 }

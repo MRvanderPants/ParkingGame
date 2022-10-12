@@ -3659,14 +3659,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 10, z: -13.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.6, y: 0.9, z: 0.9}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1679896080}
   - {fileID: 1805673891}
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_Father: {fileID: 1706272224}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &963194229
 MonoBehaviour:
@@ -3694,28 +3694,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da2d592370850bc4da2c3b1d4d94846b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minigames:
-  - goalType: 0
-    value: 1
-    timeLimit: 30
-    targetPrefab: {fileID: 1298732145524057483, guid: a01b64518d433294dbe541b9173dcba0, type: 3}
-    targetColour:
-      serializedVersion: 2
-      rgba: 4278190335
-  - goalType: 1
-    value: 1
-    timeLimit: 30
-    targetPrefab: {fileID: 1298732145524057483, guid: a01b64518d433294dbe541b9173dcba0, type: 3}
-    targetColour:
-      serializedVersion: 2
-      rgba: 4294908160
-  - goalType: 2
-    value: 1
-    timeLimit: 30
-    targetPrefab: {fileID: 1298732145524057483, guid: a01b64518d433294dbe541b9173dcba0, type: 3}
-    targetColour:
-      serializedVersion: 2
-      rgba: 4278255588
 --- !u!1 &972850775
 GameObject:
   m_ObjectHideFlags: 0
@@ -4066,7 +4044,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 71.99998, y: 300.00003}
+  m_AnchoredPosition: {x: 71.99997, y: 300.00003}
   m_SizeDelta: {x: 788, y: 108}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1032009387
@@ -6951,6 +6929,38 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1684130620}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1706272223
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1706272224}
+  m_Layer: 0
+  m_Name: CameraWrapper
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1706272224
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1706272223}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 10, z: -13.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 963194228}
+  m_Father: {fileID: 0}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1733419277
 GameObject:
   m_ObjectHideFlags: 0

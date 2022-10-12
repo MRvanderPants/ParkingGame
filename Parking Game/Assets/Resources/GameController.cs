@@ -5,7 +5,6 @@ using UnityEngine;
 public class GameController : MonoBehaviour {
 
     public static GameController main;
-    public GoalData[] minigames;
     private LevelController controller;
 
     public bool Ready {

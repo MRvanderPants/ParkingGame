@@ -29,7 +29,7 @@ public class LevelController : MonoBehaviour {
     private TrafficRoute[] targetRoutes;
 
     public GoalData CurrentGoalData {
-        get => null as GoalData;
+        get => this.goalData;
     }
 
     void Awake() {
