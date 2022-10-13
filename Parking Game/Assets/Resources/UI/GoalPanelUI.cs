@@ -52,6 +52,7 @@ public class GoalPanelUI : MonoBehaviour {
     private float animationSpeed = 0f;
     private Pulse pulse;
     private readonly List<Action<bool>> callbacks = new List<Action<bool>>();
+    private TextMeshProUGUI scoreLabel;
 
     void Update() {
         if (this.animationSpeed != 0f && this.progressBar.localScale.x > 0f) {
@@ -94,5 +95,11 @@ public class GoalPanelUI : MonoBehaviour {
 
         this.pulse = this.progressBar.transform.parent.GetComponent<Pulse>();
         this.pulse.enabled = false;
+    }
+
+    public void UpdateScore(int score) {
+        this.scoreLabel = this.transform.Find("BackPanel").Find("Main Panel").Find("ScorePanel").Find("Label").GetComponent<TextMeshProUGUI>();
+        this.scoreLabel.transform.parent.gameObject.AddComponent<EnlargeBounce>();
+        this.scoreLabel.text = (score * 100).ToString();
     }
 }

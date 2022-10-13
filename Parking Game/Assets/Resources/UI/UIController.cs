@@ -11,6 +11,10 @@ public class UIController : MonoBehaviour {
     private Transform targetPanel;
     private Transform mainMenuPanel;
 
+    public GoalPanelUI GoalPanelUI {
+        get => this.goalPanel.GetComponent<GoalPanelUI>();
+    }
+
     void Awake() {
         UIController.main = this;
     }

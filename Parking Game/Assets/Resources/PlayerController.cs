@@ -147,7 +147,6 @@ public class PlayerController : MonoBehaviour {
         CameraController.main.Shake(0.5f, 0.25f, 2f);
 
         if (car.routeType == TrafficRouteType.Target) {
-            Debug.Log("Captured target car");
             TimerUI.main.StartTimer(0.5f, () => {
                 this.ReleaseCar();
                 GameController.main.Next();

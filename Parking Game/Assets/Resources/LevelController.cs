@@ -27,9 +27,18 @@ public class LevelController : MonoBehaviour {
     private GoalPanelUI goalPanelUI;
     private TargetPanelUI targetPanelUI;
     private TrafficRoute[] targetRoutes;
+    private int score = 0;
 
     public GoalData CurrentGoalData {
         get => this.goalData;
+    }
+
+    public int Score {
+        get => this.score;
+        set {
+            this.score = value;
+            UIController.main.GoalPanelUI.UpdateScore(this.score);
+        }
     }
 
     void Awake() {
@@ -44,9 +53,15 @@ public class LevelController : MonoBehaviour {
     }
 
     public void StartGame() {
+        this.Score = 0;
         UIController.main.ToggleMainMenu(false);
         this.CreatePlayer();
         GameController.main.StartGame(this);
+    }
+
+    public void EndMission() {
+        this.Score++;
+        this.StartLevel();
     }
 
     public void StartLevel() {

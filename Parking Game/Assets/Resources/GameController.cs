@@ -21,6 +21,6 @@ public class GameController : MonoBehaviour {
     }
 
     public void Next() {
-        this.controller.StartLevel();
+        this.controller.EndMission();
     }
 }
