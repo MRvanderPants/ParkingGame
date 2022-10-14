@@ -86,7 +86,7 @@ public class Car : MonoBehaviour {
     }
 
     private void HandleMovement() {
-        float distCovered = (Time.time - this.startTime) * movementSpeed;
+        float distCovered = (Time.time - this.startTime) * (movementSpeed * LevelController.main.SpeedMultiplier);
         float fractionOfJourney = distCovered / journeyLength;
         if (float.IsNaN(fractionOfJourney)) {
             fractionOfJourney = 0f;

@@ -57,7 +57,7 @@ public class GoalPanelUI : MonoBehaviour {
     void Update() {
         if (this.animationSpeed != 0f && this.progressBar.localScale.x > 0f) {
             Vector2 scale = this.progressBar.localScale;
-            scale.x -= Time.deltaTime * this.animationSpeed;
+            scale.x -= Time.deltaTime * this.animationSpeed * LevelController.main.SpeedMultiplier;
             this.progressBar.localScale = scale;
 
             if (this.progressBar.localScale.x <= 0.5f) {

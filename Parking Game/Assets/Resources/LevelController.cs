@@ -28,9 +28,15 @@ public class LevelController : MonoBehaviour {
     private TargetPanelUI targetPanelUI;
     private TrafficRoute[] targetRoutes;
     private int score = 0;
+    private float speedMultiplier = 1f;
 
     public GoalData CurrentGoalData {
         get => this.goalData;
+    }
+
+    public float SpeedMultiplier {
+        get => this.speedMultiplier;
+        set => this.speedMultiplier = value;
     }
 
     public int Score {

@@ -105,7 +105,12 @@ MonoBehaviour:
   backwardSpeedReduction: 0.5
   rotationSpeed: 0.5
   driftingRotationIncrease: 45
+  minimalDriftingAngle: 0.33
   driftRotationLerp: 1.025
+  minimalCatchDistance: 0.5
+  targetCatchTime: 0.5
+  invalidCatchTime: 1
+  catchSpeedMultiplier: 7.5
   minimalInput: 0.25
 --- !u!114 &2667280568565938736
 MonoBehaviour:

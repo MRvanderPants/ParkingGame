@@ -14,7 +14,14 @@ public class PlayerController : MonoBehaviour {
     [Header("Rotation stats")]
     public float rotationSpeed = 0.2f;
     public float driftingRotationIncrease = 45f;
+    public float minimalDriftingAngle = 0.33f;
     public float driftRotationLerp = 0.25f;
+
+    [Header("Catching")]
+    public float minimalCatchDistance = 0.5f;
+    public float targetCatchTime = 0.5f;
+    public float invalidCatchTime = 2f;
+    public float catchSpeedMultiplier = 5f;
 
     [Header("Misc")]
     public float minimalInput = 0.5f;
@@ -29,7 +36,7 @@ public class PlayerController : MonoBehaviour {
     private readonly List<Car> colliders = new List<Car>();
 
     public bool Difting {
-        get => this.isDrifting && this.currentDriftAngle > Mathf.Abs(this.driftingRotationIncrease * 0.33f);
+        get => this.isDrifting && this.currentDriftAngle > Mathf.Abs(this.driftingRotationIncrease * this.minimalDriftingAngle);
     }
 
     void Awake() {
@@ -131,7 +138,7 @@ public class PlayerController : MonoBehaviour {
             Vector3 myPos = this.transform.position; myPos.z = 0f;
             Vector3 carPos = car.transform.position; carPos.z = 0f;
             float distance = Vector3.Distance(myPos, carPos);
-            if (distance < 0.5f) {
+            if (distance < this.minimalCatchDistance) {
                 this.CaptureCar(car);
             }
         }
@@ -147,12 +154,14 @@ public class PlayerController : MonoBehaviour {
         CameraController.main.Shake(0.5f, 0.25f, 2f);
 
         if (car.routeType == TrafficRouteType.Target) {
-            TimerUI.main.StartTimer(0.5f, () => {
+            TimerUI.main.StartTimer(this.targetCatchTime, () => {
                 this.ReleaseCar();
                 GameController.main.Next();
             });
         } else {
-            TimerUI.main.StartTimer(5f, () => {
+            LevelController.main.SpeedMultiplier = this.catchSpeedMultiplier;
+            TimerUI.main.StartTimer(this.invalidCatchTime, () => {
+                LevelController.main.SpeedMultiplier = 1f;
                 this.ReleaseCar();
             });
         }
@@ -160,7 +169,7 @@ public class PlayerController : MonoBehaviour {
 
     private void ReleaseCar() {
         this.capturedCar.Release();
-        new TimedTrigger(0.5f, () => {
+        new TimedTrigger(this.targetCatchTime, () => {
             this.capturedCar = null;
         });
     }

@@ -26,7 +26,7 @@ public class TrafficRoute : MonoBehaviour {
         if (Application.isPlaying) {
             this.carPrefab = Resources.Load<GameObject>("Prefabs/Car");
             if (this.routeType != TrafficRouteType.Target) {
-                new TimedTrigger(this.minimalSpawnTime, () => {
+                new LevelControlledTimedTrigger(this.minimalSpawnTime, () => {
                     this.SpawnCar();
                 });
             }
@@ -45,7 +45,7 @@ public class TrafficRoute : MonoBehaviour {
                 return;
             }
             float r = UnityEngine.Random.Range(this.minimalSpawnTime, this.minimalSpawnTime * 2f);
-            new TimedTrigger(r, () => {
+            new LevelControlledTimedTrigger(r, () => {
                 this.SpawnCar();
             });
         }, this.routeType);

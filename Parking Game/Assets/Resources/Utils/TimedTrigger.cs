@@ -9,9 +9,11 @@ public class TimedTriggerMono : MonoBehaviour {
     private float delayTime = -1f;
     private Action callback;
     private bool loop = false;
+    private bool relative = false;
 
     void FixedUpdate() {
-        if (this.callback != null && this.startTime != -1 && Time.time > this.startTime + this.delayTime) {
+        float delay = this.relative ? LevelController.main.SpeedMultiplier * this.delayTime : this.delayTime;
+        if (this.callback != null && this.startTime != -1 && Time.time > this.startTime + delay) {
             this.callback();
             if (!this.loop) {
                 Destroy(this);
@@ -21,7 +23,7 @@ public class TimedTriggerMono : MonoBehaviour {
         }
     }
 
-    public void Init(float delayTime, Action callback, bool loop) {
+    public void Init(float delayTime, Action callback, bool loop, bool relative = false) {
         this.delayTime = delayTime;
         this.startTime = Time.time;
         this.callback = callback;
@@ -35,11 +37,25 @@ public class TimedTriggerMono : MonoBehaviour {
 
 public class TimedTrigger {
 
-    private TimedTriggerMono component;
+    private readonly TimedTriggerMono component;
 
     public TimedTrigger(float time, Action callback, bool loop = false) {
         this.component = Camera.main.gameObject.AddComponent<TimedTriggerMono>();
         this.component.Init(time, callback, loop);
+    }
+
+    public void Destroy() {
+        this.component.Destroy();
+    }
+}
+
+public class LevelControlledTimedTrigger {
+
+    private readonly TimedTriggerMono component;
+
+    public LevelControlledTimedTrigger(float time, Action callback, bool loop = false) {
+        this.component = Camera.main.gameObject.AddComponent<TimedTriggerMono>();
+        this.component.Init(time, callback, loop, true);
     }
 
     public void Destroy() {
