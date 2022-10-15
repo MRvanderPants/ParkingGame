@@ -26,7 +26,8 @@ public class ModelFadeOut : MonoBehaviour {
 
     private void HandleFadeOut() {
         Color32 col = this.material.color;
-        col.a -= this.fadeOutSpeed;
+        float speed = this.fadeOutSpeed * LevelController.main.SpeedMultiplier;
+        col.a -= (byte)speed;
         this.material.color = col;
 
         if (col.a <= 0) {

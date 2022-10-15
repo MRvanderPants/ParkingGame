@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour {
     private Rigidbody rb;
     private Car capturedCar;
     private bool isDrifting = false;
+    private ParticleSystem captureParticles;
 
     private readonly List<Car> colliders = new List<Car>();
 
@@ -46,6 +47,7 @@ public class PlayerController : MonoBehaviour {
     void Start() {
         this.rb = this.GetComponent<Rigidbody>();
         this.model = this.transform.Find("Model");
+        this.captureParticles = this.GetComponent<ParticleSystem>();
     }
 
     void Update() {
@@ -134,12 +136,13 @@ public class PlayerController : MonoBehaviour {
 
         for (int i = 0; i < this.colliders.Count; i++) {
             Car car = this.colliders[i];
-            if (car == null || car.GetComponent<Car>().released) { return; }
-            Vector3 myPos = this.transform.position; myPos.z = 0f;
-            Vector3 carPos = car.transform.position; carPos.z = 0f;
-            float distance = Vector3.Distance(myPos, carPos);
-            if (distance < this.minimalCatchDistance) {
-                this.CaptureCar(car);
+            if (car != null && !car.GetComponent<Car>().released) {
+                Vector3 myPos = this.transform.position; myPos.z = 0f;
+                Vector3 carPos = car.transform.position; carPos.z = 0f;
+                float distance = Vector3.Distance(myPos, carPos);
+                if (distance < this.minimalCatchDistance) {
+                    this.CaptureCar(car);
+                }
             }
         }
     }
@@ -151,7 +154,8 @@ public class PlayerController : MonoBehaviour {
         car.transform.position = this.transform.position;
         Transform model = car.transform.Find("Model");
 
-        CameraController.main.Shake(0.5f, 0.25f, 2f);
+        this.captureParticles.Play();
+        CameraController.main.Shake(0.25f, 0.125f, 1f);
 
         if (car.routeType == TrafficRouteType.Target) {
             TimerUI.main.StartTimer(this.targetCatchTime, () => {
@@ -176,7 +180,7 @@ public class PlayerController : MonoBehaviour {
 
     private void OnCollisionEnter(Collision collision) {
         if (collision.collider.gameObject.tag == "environment") {
-            CameraController.main.Shake(0.5f, 0.25f, 4f);
+            CameraController.main.Shake(0.25f, 0.125f, 2f);
         }
     }
 }

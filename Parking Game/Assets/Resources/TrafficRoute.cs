@@ -40,7 +40,8 @@ public class TrafficRoute : MonoBehaviour {
 
     public void SpawnCar() {
         GameObject car = Instantiate(this.carPrefab);
-        car.GetComponent<Car>().SetRoute(this.positions.ToArray(), () => {
+        Car carCar = car.GetComponent<Car>();
+        carCar.SetRoute(this.positions.ToArray(), () => {
             if (this.routeType == TrafficRouteType.Target) {
                 return;
             }
@@ -49,6 +50,7 @@ public class TrafficRoute : MonoBehaviour {
                 this.SpawnCar();
             });
         }, this.routeType);
+        this.cars.Add(carCar);
     }
 
     public void RemoveAllCars() {

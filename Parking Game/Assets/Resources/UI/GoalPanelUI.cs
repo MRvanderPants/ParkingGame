@@ -59,6 +59,9 @@ public class GoalPanelUI : MonoBehaviour {
             Vector2 scale = this.progressBar.localScale;
             scale.x -= Time.deltaTime * this.animationSpeed * LevelController.main.SpeedMultiplier;
             this.progressBar.localScale = scale;
+            if (this.progressBar.localScale.x > 0.5f) {
+                this.progressBar.GetComponent<Image>().color = this.defaultColor;
+            }
 
             if (this.progressBar.localScale.x <= 0.5f) {
                 this.progressBar.GetComponent<Image>().color = this.midColor;

@@ -21,6 +21,7 @@ public class Car : MonoBehaviour {
     private float journeyLength;
     private bool startPointRemoved = false;
     private Action onDestroy;
+    private GameObject star;
 
     private void Update() {
         if (!this.captured && this.startTime != -1f) {
@@ -49,11 +50,14 @@ public class Car : MonoBehaviour {
         this.onDestroy = onDestroy;
         this.transform.position = this.route[0];
         this.material = this.transform.Find("Model").GetComponent<MeshRenderer>().material;
+        this.star = this.transform.Find("Star").gameObject;
+        this.star.SetActive(false);
         this.StartNextNode();
 
         GoalData goalData = LevelController.main.CurrentGoalData;
         if (this.routeType == TrafficRouteType.Target && goalData != null) {
             this.material.color = goalData.targetColour;
+            this.star.SetActive(true);
         }
     }
 
@@ -61,8 +65,7 @@ public class Car : MonoBehaviour {
         this.captured = false;
         new TimedTrigger(0.5f, () => {
             this.released = true;
-            if (!this.gameObject) {
-                this.onDestroy?.Invoke();
+            if (this == null || this.gameObject == null) {
                 return;
             }
             ModelFadeOut fader = this.gameObject.AddComponent<ModelFadeOut>();
@@ -79,6 +82,7 @@ public class Car : MonoBehaviour {
     }
 
     private void StartNextNode() {
+        if (this == null || this.gameObject == null || this.transform == null) { return; }
         this.journeyLength = Vector3.Distance(this.transform.position, this.route[0]);
         this.startTime = Time.time;
         this.transform.rotation = Quaternion.Euler(Vector3.zero);
