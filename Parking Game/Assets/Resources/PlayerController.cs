@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour {
     private Car capturedCar;
     private bool isDrifting = false;
     private ParticleSystem captureParticles;
+    private GameObject wallHitParticlePrefab;
 
     private readonly List<Car> colliders = new List<Car>();
 
@@ -48,6 +49,7 @@ public class PlayerController : MonoBehaviour {
         this.rb = this.GetComponent<Rigidbody>();
         this.model = this.transform.Find("Model");
         this.captureParticles = this.GetComponent<ParticleSystem>();
+        this.wallHitParticlePrefab = Resources.Load<GameObject>("Particles/WallHitParticle");
     }
 
     void Update() {
@@ -181,6 +183,12 @@ public class PlayerController : MonoBehaviour {
     private void OnCollisionEnter(Collision collision) {
         if (collision.collider.gameObject.tag == "environment") {
             CameraController.main.Shake(0.25f, 0.125f, 2f);
+            Vector3 contactPoint = collision.contacts[0].point;
+            GameObject particle = Instantiate(this.wallHitParticlePrefab);
+            particle.transform.position = contactPoint;
+            new TimedTrigger(1.5f, () => {
+                Destroy(particle);
+            });
         }
     }
 }
