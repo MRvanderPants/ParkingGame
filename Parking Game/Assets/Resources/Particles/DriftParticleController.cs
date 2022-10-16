@@ -15,7 +15,7 @@ public class DriftParticleController : MonoBehaviour {
     private readonly List<GameObject> particles = new List<GameObject>();
 
     void Start() {
-        this.prefab = Resources.Load<GameObject>("Prefabs/ParkingSpotEffect");
+        this.prefab = Resources.Load<GameObject>("Particles/ParkingSpotEffect");
         this.playerController = this.GetComponent<PlayerController>();
     }
 

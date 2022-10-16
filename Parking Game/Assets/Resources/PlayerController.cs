@@ -96,11 +96,12 @@ public class PlayerController : MonoBehaviour {
 
         // Basic rotation logic
         float rotSpeed = 0f;
+        float driftingMultiplier = drifting ? 2f : 1f;
         if (horizontal < -this.minimalInput) {
-            rotSpeed = rotationSpeed;
+            rotSpeed = rotationSpeed * driftingMultiplier;
         }
         else if (horizontal > this.minimalInput) {
-            rotSpeed = -rotationSpeed;
+            rotSpeed = -rotationSpeed * driftingMultiplier;
         }
 
         // Angle to model to make it look like it is drifting + lerping
