@@ -82,8 +82,7 @@ public class LevelController : MonoBehaviour {
     }
 
     public void FinishLevel(bool result) {
-        Debug.Log("Ended in " + result);
-        UIController.main.ToggleMainMenu(true);
+        UIController.main.ToggleHighscores(true);
         for (int i = 0; i < this.targetRoutes.Length; i++) {
             this.targetRoutes[i].RemoveAllCars();
         }

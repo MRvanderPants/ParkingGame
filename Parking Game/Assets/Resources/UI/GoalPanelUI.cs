@@ -94,6 +94,7 @@ public class GoalPanelUI : MonoBehaviour {
         description.text = GoalDescriptions.GetDescriptionForType(goalData.goalType);
         progressBar.localScale = new Vector3(1f, 1f, 1f);
         this.animationSpeed = 1f / goalData.timeLimit;
+        this.callbacks.Clear();
         this.callbacks.Add(callback);
 
         this.pulse = this.progressBar.transform.parent.GetComponent<Pulse>();
