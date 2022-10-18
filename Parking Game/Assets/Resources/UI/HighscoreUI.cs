@@ -29,6 +29,8 @@ public class HighscoreUI : MonoBehaviour {
     public void Close() {
         UIController.main.ToggleHighscores(false);
         UIController.main.ToggleMainMenu(true);
+        AudioClip clickSFX = Resources.Load<AudioClip>("Audio/SFX/UI/select_action");
+        AudioController.main.PlayClip(clickSFX, Mixers.UI);
     }
 
     private void RemoveRows() {

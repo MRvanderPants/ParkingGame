@@ -23,6 +23,11 @@ public class PlayerController : MonoBehaviour {
     public float invalidCatchTime = 2f;
     public float catchSpeedMultiplier = 5f;
 
+    [Header("SFX")]
+    public AudioClip driftingStartSFX;
+    public AudioClip[] collisionSoundSFX;
+    public AudioClip[] collisionAdditionalSoundSFX;
+
     [Header("Misc")]
     public float minimalInput = 0.5f;
 
@@ -32,8 +37,11 @@ public class PlayerController : MonoBehaviour {
     private Rigidbody rb;
     private Car capturedCar;
     private bool isDrifting = false;
+    private bool sfxThrottle = false;
+    private bool playingLongSfx = false;
     private ParticleSystem captureParticles;
     private GameObject wallHitParticlePrefab;
+    private AudioSource driftingAudioSource;
 
     private readonly List<Car> colliders = new List<Car>();
 
@@ -60,6 +68,7 @@ public class PlayerController : MonoBehaviour {
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
         this.isDrifting = Input.GetButton("Fire1");
+        this.HandleDriftingSFX();
         this.HandleHorizontalMovement(horizontal, vertical, this.isDrifting);
         this.HandleVerticalMovement(horizontal, vertical, this.isDrifting);
         this.CheckForCapture();
@@ -161,14 +170,21 @@ public class PlayerController : MonoBehaviour {
         CameraController.main.Shake(0.25f, 0.125f, 1f);
 
         if (car.routeType == TrafficRouteType.Target) {
+            AudioClip clickSFX = Resources.Load<AudioClip>("Audio/SFX/capture");
+            AudioController.main.PlayClip(clickSFX, Mixers.SFX);
             TimerUI.main.StartTimer(this.targetCatchTime, () => {
                 this.ReleaseCar();
                 GameController.main.Next();
             });
         } else {
             LevelController.main.SpeedMultiplier = this.catchSpeedMultiplier;
+            AudioClip clickSFX = Resources.Load<AudioClip>("Audio/SFX/wrongCapture");
+            AudioController.main.PlayClip(clickSFX, Mixers.SFX);
+            AudioClip fastForwardSFX = Resources.Load<AudioClip>("Audio/SFX/fastForward");
+            AudioSource fastForwardSource = AudioController.main.PlayClip(fastForwardSFX, Mixers.SFX, 0.2f, true);
             TimerUI.main.StartTimer(this.invalidCatchTime, () => {
                 LevelController.main.SpeedMultiplier = 1f;
+                AudioController.main.FadeOutClip(fastForwardSource);
                 this.ReleaseCar();
             });
         }
@@ -187,9 +203,45 @@ public class PlayerController : MonoBehaviour {
             Vector3 contactPoint = collision.contacts[0].point;
             GameObject particle = Instantiate(this.wallHitParticlePrefab);
             particle.transform.position = contactPoint;
+            this.HandleCollisionSFX();
             new TimedTrigger(1.5f, () => {
                 Destroy(particle);
             });
+        }
+    }
+
+    private void HandleDriftingSFX() {
+        if (this.isDrifting && this.driftingAudioSource == null) {
+            this.driftingAudioSource = AudioController.main.PlayClip(this.driftingStartSFX, Mixers.SFX);
+        } else if (!this.isDrifting && this.driftingAudioSource != null) {
+            AudioController.main.FadeOutClip(this.driftingAudioSource);
+            //this.driftingAudioSource.Stop();
+            this.driftingAudioSource = null;
+        }
+    }
+
+    private void HandleCollisionSFX() {
+        if (this.sfxThrottle) {
+            return;
+        }
+        this.sfxThrottle = true;
+        new TimedTrigger(0.05f, () => {
+            this.sfxThrottle = false;
+        });
+
+        int r0 = UnityEngine.Random.Range(0, this.collisionSoundSFX.Length);
+        AudioController.main.PlayClip(this.collisionSoundSFX[r0], Mixers.SFX, 0.2f);
+
+        if (!this.playingLongSfx) {
+            int r1 = UnityEngine.Random.Range(0, this.collisionAdditionalSoundSFX.Length);
+            int r2 = UnityEngine.Random.Range(0, 10);
+            if (r2 > 7) {
+                this.playingLongSfx = true;
+                AudioController.main.PlayClip(this.collisionAdditionalSoundSFX[r1], Mixers.SFX);
+                new TimedTrigger(2f, () => {
+                    this.playingLongSfx = false;
+                });
+            }
         }
     }
 }

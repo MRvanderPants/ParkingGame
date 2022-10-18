@@ -113,6 +113,13 @@ MonoBehaviour:
   targetCatchTime: 0.5
   invalidCatchTime: 1
   catchSpeedMultiplier: 7.5
+  driftingStartSFX: {fileID: 8300000, guid: 3cdb6bd5dc175e84aa0102fac9f82a00, type: 3}
+  collisionSoundSFX:
+  - {fileID: 8300000, guid: c12a91817ae5d9c47bfea7dde7902714, type: 3}
+  - {fileID: 8300000, guid: 85f43b38e482ccc46b2649fbb2954577, type: 3}
+  collisionAdditionalSoundSFX:
+  - {fileID: 8300000, guid: 8f601f0a342508c4d89fe019d131ee0f, type: 3}
+  - {fileID: 8300000, guid: 4ac580fa8ad3b104a9331dbbc7ef3f7c, type: 3}
   minimalInput: 0.25
 --- !u!114 &2667280568565938736
 MonoBehaviour:
