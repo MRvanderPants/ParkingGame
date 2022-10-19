@@ -47,6 +47,16 @@ public class LevelController : MonoBehaviour {
         }
     }
 
+    public Car[] TargetCars {
+        get {
+            List<Car> targets = new List<Car>();
+            for (int i = 0; i < this.targetRoutes.Length; i++) {
+                targets.AddRange(this.targetRoutes[i].Cars);
+            }
+            return targets.ToArray();
+        }
+    }
+
     void Awake() {
         LevelController.main = this;
     }

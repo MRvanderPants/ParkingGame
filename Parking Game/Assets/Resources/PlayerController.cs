@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour {
     public AudioClip[] collisionAdditionalSoundSFX;
 
     [Header("Misc")]
+    public float compassDistance = 1.5f;
     public float minimalInput = 0.5f;
 
     private Transform model;
@@ -44,6 +45,7 @@ public class PlayerController : MonoBehaviour {
     private AudioSource driftingAudioSource;
 
     private readonly List<Car> colliders = new List<Car>();
+    private readonly List<GameObject> compasses = new List<GameObject>();
 
     public bool Difting {
         get => this.isDrifting && this.currentDriftAngle > Mathf.Abs(this.driftingRotationIncrease * this.minimalDriftingAngle);
@@ -61,6 +63,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     void Update() {
+        this.HandleCompasses();
         if (this.capturedCar != null) {
             return;
         }
@@ -215,7 +218,6 @@ public class PlayerController : MonoBehaviour {
             this.driftingAudioSource = AudioController.main.PlayClip(this.driftingStartSFX, Mixers.SFX);
         } else if (!this.isDrifting && this.driftingAudioSource != null) {
             AudioController.main.FadeOutClip(this.driftingAudioSource);
-            //this.driftingAudioSource.Stop();
             this.driftingAudioSource = null;
         }
     }
@@ -243,5 +245,53 @@ public class PlayerController : MonoBehaviour {
                 });
             }
         }
+    }
+
+    private void HandleCompasses() {
+        Car[] targets = LevelController.main.TargetCars;
+        if (targets.Length > 0 && targets.Length != this.compasses.Count) {
+            this.RemoveAllCompasses();
+            this.CreateCompasses(targets);
+        } else if (targets.Length > 0 && targets.Length == this.compasses.Count) { // targets.Length == this.lastTargetCount && 
+            this.MoveCompasses(targets);
+        } else {
+            this.RemoveAllCompasses();
+        }
+    }
+
+    private void CreateCompasses(Car[] targets) {
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/Compass");
+        for (int i = 0; i < targets.Length; i++) {
+            GameObject compass = Instantiate(prefab, this.transform);
+            this.compasses.Add(compass);
+        }
+    }
+
+    private void MoveCompasses(Car[] targets) {
+        for (int i = 0; i < targets.Length; i++) {
+            GameObject compass = this.compasses[i];
+            Transform target = targets[i].transform;
+            compass.transform.position = this.transform.position;
+            float angle = this.GetAngle(compass.transform.position, target.transform.position) - 90f;
+            Vector3 eul = compass.transform.eulerAngles;
+            eul.z = angle;
+            compass.transform.eulerAngles = eul;
+            compass.transform.position += compass.transform.up * this.compassDistance;
+        }
+    }
+
+    private float GetAngle(Vector3 from, Vector3 to) {
+        var dy = to.y - from.y;
+        var dx = to.x - from.x;
+        var theta = Mathf.Atan2(dy, dx);
+        theta *= 180 / Mathf.PI;
+        return theta;
+    }
+
+    private void RemoveAllCompasses() {
+        for (int i = 0; i < this.compasses.Count; i++) {
+            Destroy(this.compasses[i]);
+        }
+        this.compasses.Clear();
     }
 }

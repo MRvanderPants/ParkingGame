@@ -22,6 +22,10 @@ public class TrafficRoute : MonoBehaviour {
 
     private readonly List<Car> cars = new List<Car>();
 
+    public Car[] Cars {
+        get => this.cars.ToArray();
+    }
+
     void Start() {
         if (Application.isPlaying) {
             this.carPrefab = Resources.Load<GameObject>("Prefabs/Car");
@@ -42,6 +46,7 @@ public class TrafficRoute : MonoBehaviour {
         GameObject car = Instantiate(this.carPrefab);
         Car carCar = car.GetComponent<Car>();
         carCar.SetRoute(this.positions.ToArray(), () => {
+            this.cars.Remove(carCar);
             if (this.routeType == TrafficRouteType.Target) {
                 return;
             }
