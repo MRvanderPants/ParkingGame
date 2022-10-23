@@ -22,8 +22,6 @@ public class HighscoreUI : MonoBehaviour {
     }
 
     public void Activate() {
-        AudioClip highscoresMusic = Resources.Load<AudioClip>("Audio/Music/aftermath");
-        AudioController.main.PlayMusic(highscoresMusic);
         this.RemoveRows();
         this.CreateRows();
     }
@@ -33,7 +31,6 @@ public class HighscoreUI : MonoBehaviour {
         UIController.main.ToggleMainMenu(true);
         AudioClip clickSFX = Resources.Load<AudioClip>("Audio/SFX/UI/select_action");
         AudioController.main.PlayClip(clickSFX, Mixers.UI);
-        AudioController.main.StopMixer(Mixers.Music);
     }
 
     private void RemoveRows() {

@@ -177,7 +177,7 @@ public class PlayerController : MonoBehaviour {
             AudioController.main.PlayClip(clickSFX, Mixers.SFX);
             TimerUI.main.StartTimer(this.targetCatchTime, () => {
                 this.ReleaseCar();
-                GameController.main.Next();
+                LevelController.main.EndMission();
             });
         } else {
             LevelController.main.SpeedMultiplier = this.catchSpeedMultiplier;
@@ -239,7 +239,7 @@ public class PlayerController : MonoBehaviour {
             int r2 = UnityEngine.Random.Range(0, 10);
             if (r2 > 7) {
                 this.playingLongSfx = true;
-                AudioController.main.PlayClip(this.collisionAdditionalSoundSFX[r1], Mixers.SFX);
+                AudioController.main.PlayClip(this.collisionAdditionalSoundSFX[r1], Mixers.SFX, 0.3f);
                 new TimedTrigger(2f, () => {
                     this.playingLongSfx = false;
                 });

@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class UIController : MonoBehaviour {
 
     public static UIController main;
+    public AudioClip MainMenuMusic;
+    public AudioClip HighscoreMusic;
 
     private Transform goalPanel;
     private Transform targetPanel;
@@ -33,12 +35,20 @@ public class UIController : MonoBehaviour {
         this.goalPanel.gameObject.SetActive(!state);
         this.targetPanel.gameObject.SetActive(!state);
         this.mainMenuPanel.gameObject.SetActive(state);
+        if (state) {
+            AudioController.main.PlayMusic(this.MainMenuMusic);
+        } else {
+            AudioController.main.StopMixer(Mixers.Music);
+        }
     }
 
     public void ToggleHighscores(bool state) {
         this.highscorePanel.gameObject.SetActive(state);
         if(state) {
+            AudioController.main.PlayMusic(this.HighscoreMusic);
             this.highscorePanel.GetComponent<HighscoreUI>().Activate();
+        } else {
+            AudioController.main.StopMixer(Mixers.Music);
         }
     }
 }

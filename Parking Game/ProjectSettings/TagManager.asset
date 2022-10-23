@@ -47,3 +47,9 @@ TagManager:
   - name: UI
     uniqueID: 2641720865
     locked: 0
+  - name: Overtiles
+    uniqueID: 3883581873
+    locked: 0
+  - name: Player
+    uniqueID: 2905991609
+    locked: 0

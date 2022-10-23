@@ -23,6 +23,9 @@ public class LevelController : MonoBehaviour {
 
     public static LevelController main;
 
+    public AudioClip LevelMusic;
+    public AudioClip LevelMusicIntro;
+
     private GoalData goalData;
     private GoalPanelUI goalPanelUI;
     private TargetPanelUI targetPanelUI;
@@ -68,11 +71,16 @@ public class LevelController : MonoBehaviour {
         this.FindAllTargetRoutes();
     }
 
+    // Called from UI
     public void StartGame() {
         this.Score = 0;
         UIController.main.ToggleMainMenu(false);
         this.CreatePlayer();
-        GameController.main.StartGame(this);
+        this.StartLevel();
+        AudioController.main.StopMixer(Mixers.Music);
+        new TimedTrigger(2f, () => {
+            AudioController.main.PlayMusic(this.LevelMusicIntro, this.LevelMusic, 0.3f);
+        });
     }
 
     public void EndMission() {
