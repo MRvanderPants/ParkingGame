@@ -71,7 +71,7 @@ public class PlayerController : MonoBehaviour {
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
         this.isDrifting = Input.GetButton("Fire1");
-        this.HandleDriftingSFX();
+        this.HandleDrifting();
         this.HandleHorizontalMovement(horizontal, vertical, this.isDrifting);
         this.HandleVerticalMovement(horizontal, vertical, this.isDrifting);
         this.CheckForCapture();
@@ -211,6 +211,10 @@ public class PlayerController : MonoBehaviour {
                 Destroy(particle);
             });
         }
+    }
+
+    private void HandleDrifting() {
+        this.HandleDriftingSFX();
     }
 
     private void HandleDriftingSFX() {
