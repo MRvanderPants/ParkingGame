@@ -5,43 +5,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GoalDescriptions {
-
-    public static string GetTitleForType(GoalType type) {
-        switch (type) {
-            case GoalType.CaptureColour:
-                return "Colour catcher";
-
-            case GoalType.Stealth:
-                return "Private parking";
-
-            case GoalType.Ticket:
-                return "Parking Police";
-
-            case GoalType.CaptureTarget:
-            default:
-                return "Catch that car!";
-        }
-    }
-
-    public static string GetDescriptionForType(GoalType type) {
-        switch (type) {
-            case GoalType.CaptureColour:
-                return "Capture only cars of the specified colour.";
-
-            case GoalType.Stealth:
-                return "Avoid parking any cars and run out the clock.";
-
-            case GoalType.Ticket:
-                return "Find misparked cars and give them a ticket.";
-
-            case GoalType.CaptureTarget:
-            default:
-                return "Find the highlighted car before the time runs out.";
-        }
-    }
-}
-
 public class GoalPanelUI : MonoBehaviour {
 
     public Color32 defaultColor;
@@ -53,6 +16,7 @@ public class GoalPanelUI : MonoBehaviour {
     private Pulse pulse;
     private readonly List<Action<bool>> callbacks = new List<Action<bool>>();
     private TextMeshProUGUI scoreLabel;
+    private TextMeshProUGUI levelLabel;
 
     void Update() {
         if (this.animationSpeed != 0f && this.progressBar.localScale.x > 0f) {
@@ -88,11 +52,14 @@ public class GoalPanelUI : MonoBehaviour {
         Transform mainPanel = this.transform.Find("BackPanel").Find("Main Panel");
         this.progressBar = mainPanel.Find("ProgressPanel").Find("Fill").GetComponent<RectTransform>();
         var title = mainPanel.Find("Title").GetComponent<TextMeshProUGUI>();
+        var icon = mainPanel.Find("Title").Find("Icon").GetComponent<Image>();
         var description = mainPanel.Find("DescriptionPanel").Find("Label").GetComponent<TextMeshProUGUI>();
+        var settings = MissionController.main.GetMissionSettingsForType(goalData.goalType);
 
-        title.text = GoalDescriptions.GetTitleForType(goalData.goalType);
-        description.text = GoalDescriptions.GetDescriptionForType(goalData.goalType);
+        title.text = settings.name;
+        description.text = settings.description;
         progressBar.localScale = new Vector3(1f, 1f, 1f);
+        icon.overrideSprite = settings.icon;
         this.animationSpeed = 1f / goalData.timeLimit;
         this.callbacks.Clear();
         this.callbacks.Add(callback);
@@ -105,5 +72,11 @@ public class GoalPanelUI : MonoBehaviour {
         this.scoreLabel = this.transform.Find("BackPanel").Find("Main Panel").Find("ScorePanel").Find("Label").GetComponent<TextMeshProUGUI>();
         this.scoreLabel.transform.parent.gameObject.AddComponent<EnlargeBounce>();
         this.scoreLabel.text = (score * 100).ToString();
+    }
+
+    public void UpdateLevel(int level) {
+        this.levelLabel = this.transform.Find("BackPanel").Find("Main Panel").Find("LevelPanel").Find("Label").GetComponent<TextMeshProUGUI>();
+        this.levelLabel.transform.parent.gameObject.AddComponent<EnlargeBounce>();
+        this.levelLabel.text = level + " LVL";
     }
 }

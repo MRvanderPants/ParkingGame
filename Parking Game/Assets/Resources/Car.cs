@@ -54,7 +54,7 @@ public class Car : MonoBehaviour {
         this.star.SetActive(false);
         this.StartNextNode();
 
-        GoalData goalData = LevelController.main.CurrentGoalData;
+        GoalData goalData = MissionController.main.CurrentGoalData;
         if (this.routeType == TrafficRouteType.Target && goalData != null) {
             this.material.color = goalData.targetColour;
             this.star.SetActive(true);

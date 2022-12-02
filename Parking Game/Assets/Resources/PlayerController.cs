@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviour {
         this.wallHitParticlePrefab = Resources.Load<GameObject>("Particles/WallHitParticle");
     }
 
-    void Update() {
+    void FixedUpdate() {
         this.HandleCompasses();
         if (this.capturedCar != null) {
             return;
@@ -162,6 +162,7 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    // TODO handle capturing for different game modes
     private void CaptureCar(Car car) {
         this.rb.velocity = Vector3.zero;
         this.capturedCar = car;

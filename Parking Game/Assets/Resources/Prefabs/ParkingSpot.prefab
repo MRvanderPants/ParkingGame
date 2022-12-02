@@ -133,10 +133,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08f8b445c3cf010499aa9c835298e2df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 6
-  turnSpeedReduction: 0.9
+  moveSpeed: 8
+  turnSpeedReduction: 0.85
   backwardSpeedReduction: 0.5
-  rotationSpeed: 0.5
+  rotationSpeed: 2.5
   driftingRotationIncrease: 45
   minimalDriftingAngle: 0.33
   driftRotationLerp: 1.025

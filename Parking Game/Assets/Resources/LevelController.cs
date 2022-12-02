@@ -2,21 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum GoalType {
-    CaptureTarget,
-    CaptureColour,
-    Stealth,
-    Ticket,
-    CarMoving,
-};
-
+/**
+ * Actual dataset that should be used to generate a set of missions for a level.
+ */
 [System.Serializable]
-public class GoalData {
-    public GoalType goalType;
-    public int value;
-    public float timeLimit;
-    public GameObject targetPrefab;
-    public Color32 targetColour;
+public class LevelData {
+    public int levelIndex;
+    public int missionCount;
+    public GoalType[] availableTypes;
 }
 
 public class LevelController : MonoBehaviour {
@@ -26,17 +19,15 @@ public class LevelController : MonoBehaviour {
     public AudioClip LevelMusic;
     public AudioClip LevelMusicIntro;
 
-    private GoalData goalData;
     private GoalPanelUI goalPanelUI;
     private TargetPanelUI targetPanelUI;
     private TrafficRoute[] targetRoutes;
+    private LevelData levelData;
     private int score = 0;
+    private int levelIndex = 0;
     private float speedMultiplier = 1f;
 
-    public GoalData CurrentGoalData {
-        get => this.goalData;
-    }
-
+    #region Getters and setters
     public float SpeedMultiplier {
         get => this.speedMultiplier;
         set => this.speedMultiplier = value;
@@ -50,6 +41,14 @@ public class LevelController : MonoBehaviour {
         }
     }
 
+    public int LevelIndex {
+        get => this.levelIndex;
+        set {
+            this.levelIndex = value;
+            UIController.main.GoalPanelUI.UpdateLevel(this.score);
+        }
+    }
+
     public Car[] TargetCars {
         get {
             List<Car> targets = new List<Car>();
@@ -59,6 +58,7 @@ public class LevelController : MonoBehaviour {
             return targets.ToArray();
         }
     }
+    #endregion
 
     void Awake() {
         LevelController.main = this;
@@ -67,14 +67,15 @@ public class LevelController : MonoBehaviour {
     void Start() {
         this.goalPanelUI = this.transform.Find("GoalPanel").GetComponent<GoalPanelUI>();
         this.targetPanelUI = this.transform.Find("TargetPanel").GetComponent<TargetPanelUI>();
-        this.goalData = this.GenerateGoalData();
         this.FindAllTargetRoutes();
     }
 
+    #region Game controlling methods
     // Called from UI
     public void StartGame() {
         this.Score = 0;
         UIController.main.ToggleMainMenu(false);
+        this.CreateInitialLevelData();
         this.CreatePlayer();
         this.StartLevel();
         AudioController.main.StopMixer(Mixers.Music);
@@ -83,29 +84,49 @@ public class LevelController : MonoBehaviour {
         });
     }
 
-    public void EndMission() {
-        this.Score++;
-        this.StartLevel();
-    }
-
-    public void StartLevel() {
-        this.goalData = this.GenerateGoalData();
-        new TimedTrigger(0.05f, () => {
-            this.targetPanelUI.SetTarget(this.goalData);
-            this.ActivateRandomTargetRoute();
-            this.goalPanelUI.StartTimer(this.goalData, (bool result) => {
-                this.FinishLevel(result);
-            });
-        });
-    }
-
-    public void FinishLevel(bool result) {
+    public void EndGame(bool result) {
         UIController.main.ToggleHighscores(true);
         for (int i = 0; i < this.targetRoutes.Length; i++) {
             this.targetRoutes[i].RemoveAllCars();
         }
         Destroy(PlayerController.main.gameObject);
     }
+    #endregion
+
+    #region Level controlling methods
+    private void StartLevel() {
+        this.LevelIndex = this.levelIndex + 1;
+        this.levelData = MissionController.main.UpdateLevelData(this.levelData, this.levelIndex);
+        MissionController.main.GenerateMissions(this.levelData);
+        this.StartMission();
+    }
+
+    private void EndLevel() {
+        this.Score++;
+        this.StartLevel();
+    }
+    #endregion
+
+    #region  Mission controlling methods
+    private void StartMission() {
+        new TimedTrigger(0.05f, () => {
+            this.targetPanelUI.SetTarget(MissionController.main.CurrentGoalData);
+            this.ActivateRandomTargetRoute();
+            this.goalPanelUI.StartTimer(MissionController.main.CurrentGoalData, (bool result) => {
+                this.EndGame(result);
+            });
+        });
+    }
+
+    public void EndMission() {
+        bool hasEnded = MissionController.main.EndMission();
+        if (hasEnded) {
+            this.EndLevel();
+        } else {
+            this.StartMission();
+        }
+    }
+    #endregion
 
     private void FindAllTargetRoutes() {
         TrafficRoute[] routes = GameObject.FindObjectsOfType<TrafficRoute>();
@@ -128,31 +149,13 @@ public class LevelController : MonoBehaviour {
         Instantiate(prefab);
     }
 
-    private GoalData GenerateGoalData() {
-        return new GoalData() {
-            goalType = this.GenerateGoalType(),
-            value = 0,
-            timeLimit = UnityEngine.Random.Range(20, 30), // TODO replace
-            targetPrefab = Resources.Load<GameObject>("Prefabs/Car"),
-            targetColour = this.GenerateColor(),
+    private void CreateInitialLevelData() {
+        this.levelData = new LevelData {
+            levelIndex = this.levelIndex,
+            missionCount = 1,
+            availableTypes = new GoalType[1] {
+                GoalType.CaptureTarget
+            }
         };
-    }
-
-    private GoalType GenerateGoalType() {
-        int r = UnityEngine.Random.Range(0, 4);
-        switch (r) {
-            case 0: return GoalType.CaptureColour;
-            case 1: return GoalType.Stealth;
-            case 2: return GoalType.Ticket;
-            case 3:
-            default: return GoalType.CaptureTarget;
-        }
-    }
-
-    private Color32 GenerateColor() {
-        byte r = (byte)UnityEngine.Random.Range(0, 255);
-        byte g = (byte)UnityEngine.Random.Range(0, 255);
-        byte b = (byte)UnityEngine.Random.Range(0, 255);
-        return new Color32(r, g, b, 255);
     }
 }
