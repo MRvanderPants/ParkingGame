@@ -46,7 +46,7 @@ public class LevelController : MonoBehaviour {
         get => this.levelIndex;
         set {
             this.levelIndex = value;
-            UIController.main.GoalPanelUI.UpdateLevel(this.score);
+            UIController.main.GoalPanelUI.UpdateLevel(this.levelIndex);
         }
     }
 
