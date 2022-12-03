@@ -9093,7 +9093,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1479360732
 Transform:
   m_ObjectHideFlags: 0
@@ -12617,14 +12617,16 @@ MonoBehaviour:
     icon: {fileID: -25847542, guid: d765ac01337fb2f47bc3426769311220, type: 3}
     minLevel: 0
     isRandomized: 1
+    notInARow: 0
     baseDuration: 40
     lockPlayerDuringCapture: 1
   - name: Private parking
     description: Avoid parking any cars and run out the clock
     goalType: 1
     icon: {fileID: 340363830, guid: d765ac01337fb2f47bc3426769311220, type: 3}
-    minLevel: 5
+    minLevel: 3
     isRandomized: 1
+    notInARow: 1
     baseDuration: 20
     lockPlayerDuringCapture: 1
   - name: Parking Police
@@ -12632,7 +12634,8 @@ MonoBehaviour:
     goalType: 2
     icon: {fileID: -160324257, guid: d765ac01337fb2f47bc3426769311220, type: 3}
     minLevel: 3
-    isRandomized: 1
+    isRandomized: 0
+    notInARow: 0
     baseDuration: 30
     lockPlayerDuringCapture: 1
   - name: Crazy Capture
@@ -12640,7 +12643,8 @@ MonoBehaviour:
     goalType: 3
     icon: {fileID: -2086923457, guid: d765ac01337fb2f47bc3426769311220, type: 3}
     minLevel: 7
-    isRandomized: 1
+    isRandomized: 0
+    notInARow: 0
     baseDuration: 37.5
     lockPlayerDuringCapture: 0
   - name: Hyper Mode
@@ -12649,6 +12653,7 @@ MonoBehaviour:
     icon: {fileID: 443064161, guid: d765ac01337fb2f47bc3426769311220, type: 3}
     minLevel: 5
     isRandomized: 0
+    notInARow: 0
     baseDuration: 35
     lockPlayerDuringCapture: 0
 --- !u!1 &2118524535

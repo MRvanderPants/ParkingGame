@@ -188,6 +188,15 @@ public class PlayerController : MonoBehaviour {
     private void ResolveCarCaptureByGoal(Car car) {
         GoalData goalData = MissionController.main.CurrentGoalData;
         switch (goalData.goalType) {
+
+            // Mode to avoid cars for the duration of the mission
+            case GoalType.Stealth:
+                new TimedTrigger(1f, () => {
+                    LevelController.main.EndGame(false);
+                });
+                break;
+
+            // Default mode to capture a specific car
             case GoalType.CaptureTarget:
             default:
                 if (car.routeType == TrafficRouteType.Target) {

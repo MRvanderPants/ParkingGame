@@ -43,6 +43,9 @@ public class BaseMissionSettings {
     [Tooltip("Whether or not this mission type will be used in the random circulation.")]
     public bool isRandomized = true;
 
+    [Tooltip("Whether or not this minigame can appear multiple times in a row")]
+    public bool notInARow = false;
+
     [Header("Gameplay Settings")]
 
     [Tooltip("The base amount of time the player gets for this mission")]
@@ -57,6 +60,8 @@ public class MissionController : MonoBehaviour {
 
     public float missionCountMultiplier = 0.4f;
     public BaseMissionSettings[] baseMissionSettings;
+
+    private GoalType lastGoalType = GoalType.CaptureTarget;
 
     private readonly List<GoalData> missions = new List<GoalData>();
 
@@ -108,7 +113,9 @@ public class MissionController : MonoBehaviour {
     public GoalType[] GetGoalTypesForLevelIndex(int levelIndex) {
         List<GoalType> types = new List<GoalType>();
         for (int i = 0; i < this.baseMissionSettings.Length; i++) {
-            if (this.baseMissionSettings[i].isRandomized && this.baseMissionSettings[i].minLevel <= levelIndex) {
+            if (this.baseMissionSettings[i].isRandomized
+                && this.baseMissionSettings[i].minLevel <= levelIndex
+                && (!this.baseMissionSettings[i].notInARow || lastGoalType != this.baseMissionSettings[i].goalType)) {
                 types.Add(this.baseMissionSettings[i].goalType);
             }
         }
@@ -136,6 +143,7 @@ public class MissionController : MonoBehaviour {
         List<GoalData> goalList = new List<GoalData>();
         for (int i = 0; i < levelData.missionCount; i++) {
             GoalType goalType = this.GenerateGoalType(levelData);
+            this.lastGoalType = goalType;
             BaseMissionSettings settings = this.GetMissionSettingsForType(goalType);
             float timeLimit = this.CalculateTimeLimit(settings, levelData);
             goalList.Add(new GoalData() {

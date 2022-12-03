@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class TargetPanelUI : MonoBehaviour {
 
     public void SetTarget(GoalData goalData) {
+        this.gameObject.SetActive(true);
         Transform model = this.transform.Find("Model");
         GameObject newModel = Instantiate(goalData.targetPrefab);
         Transform obj = newModel.transform.Find("Model");
@@ -18,5 +19,9 @@ public class TargetPanelUI : MonoBehaviour {
         obj.GetComponent<MeshRenderer>().material.color = goalData.targetColour;
         Destroy(model.gameObject);
         Destroy(newModel);
+    }
+
+    public void Hide() {
+        this.gameObject.SetActive(false);
     }
 }
