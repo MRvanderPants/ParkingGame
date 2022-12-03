@@ -12616,36 +12616,41 @@ MonoBehaviour:
     goalType: 0
     icon: {fileID: -25847542, guid: d765ac01337fb2f47bc3426769311220, type: 3}
     minLevel: 0
-    baseDuration: 40
     isRandomized: 1
+    baseDuration: 40
+    lockPlayerDuringCapture: 1
   - name: Private parking
     description: Avoid parking any cars and run out the clock
     goalType: 1
     icon: {fileID: 340363830, guid: d765ac01337fb2f47bc3426769311220, type: 3}
     minLevel: 5
-    baseDuration: 20
     isRandomized: 1
+    baseDuration: 20
+    lockPlayerDuringCapture: 1
   - name: Parking Police
     description: Find misparked cars and give them a ticket
     goalType: 2
     icon: {fileID: -160324257, guid: d765ac01337fb2f47bc3426769311220, type: 3}
     minLevel: 3
-    baseDuration: 30
     isRandomized: 1
+    baseDuration: 30
+    lockPlayerDuringCapture: 1
   - name: Crazy Capture
     description: Move the car to the destination
     goalType: 3
     icon: {fileID: -2086923457, guid: d765ac01337fb2f47bc3426769311220, type: 3}
     minLevel: 7
-    baseDuration: 37.5
     isRandomized: 1
+    baseDuration: 37.5
+    lockPlayerDuringCapture: 0
   - name: Hyper Mode
     description: Catch all the cars!
     goalType: 4
     icon: {fileID: 443064161, guid: d765ac01337fb2f47bc3426769311220, type: 3}
     minLevel: 5
-    baseDuration: 35
     isRandomized: 0
+    baseDuration: 35
+    lockPlayerDuringCapture: 0
 --- !u!1 &2118524535
 GameObject:
   m_ObjectHideFlags: 0

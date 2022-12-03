@@ -51,6 +51,13 @@ public class PlayerController : MonoBehaviour {
         get => this.isDrifting && this.currentDriftAngle > Mathf.Abs(this.driftingRotationIncrease * this.minimalDriftingAngle);
     }
 
+    public bool CanMove {
+        get => this.capturedCar == null || (
+            this.capturedCar != null
+            && !MissionController.main.GetCurrentMissionSettings().lockPlayerDuringCapture
+        );
+    }
+
     void Awake() {
         PlayerController.main = this;
     }
@@ -64,7 +71,7 @@ public class PlayerController : MonoBehaviour {
 
     void FixedUpdate() {
         this.HandleCompasses();
-        if (this.capturedCar != null) {
+        if (!this.CanMove) {
             return;
         }
 
@@ -164,34 +171,54 @@ public class PlayerController : MonoBehaviour {
 
     // TODO handle capturing for different game modes
     private void CaptureCar(Car car) {
-        this.rb.velocity = Vector3.zero;
+        BaseMissionSettings missionSettings = MissionController.main.GetCurrentMissionSettings();
+        if (missionSettings.lockPlayerDuringCapture) {
+            this.rb.velocity = Vector3.zero;
+        }
+
         this.capturedCar = car;
         car.captured = true;
         car.transform.position = this.transform.position;
-        Transform model = car.transform.Find("Model");
 
         this.captureParticles.Play();
         CameraController.main.Shake(0.25f, 0.125f, 1f);
+        this.ResolveCarCaptureByGoal(car);
+    }
 
-        if (car.routeType == TrafficRouteType.Target) {
-            AudioClip clickSFX = Resources.Load<AudioClip>("Audio/SFX/capture");
-            AudioController.main.PlayClip(clickSFX, Mixers.SFX);
-            TimerUI.main.StartTimer(this.targetCatchTime, () => {
-                this.ReleaseCar();
-                LevelController.main.EndMission();
-            });
-        } else {
-            LevelController.main.SpeedMultiplier = this.catchSpeedMultiplier;
-            AudioClip clickSFX = Resources.Load<AudioClip>("Audio/SFX/wrongCapture");
-            AudioController.main.PlayClip(clickSFX, Mixers.SFX);
-            AudioClip fastForwardSFX = Resources.Load<AudioClip>("Audio/SFX/fastForward");
-            AudioSource fastForwardSource = AudioController.main.PlayClip(fastForwardSFX, Mixers.SFX, 0.2f, true);
-            TimerUI.main.StartTimer(this.invalidCatchTime, () => {
-                LevelController.main.SpeedMultiplier = 1f;
-                AudioController.main.FadeOutClip(fastForwardSource);
-                this.ReleaseCar();
-            });
+    private void ResolveCarCaptureByGoal(Car car) {
+        GoalData goalData = MissionController.main.CurrentGoalData;
+        switch (goalData.goalType) {
+            case GoalType.CaptureTarget:
+            default:
+                if (car.routeType == TrafficRouteType.Target) {
+                    this.ResolveValidCapture();
+                } else {
+                    this.ResolveInvalidCapture();
+                }
+                break;
         }
+    }
+
+    private void ResolveValidCapture() {
+        AudioClip clickSFX = Resources.Load<AudioClip>("Audio/SFX/capture");
+        AudioController.main.PlayClip(clickSFX, Mixers.SFX);
+        TimerUI.main.StartTimer(this.targetCatchTime, () => {
+            this.ReleaseCar();
+            LevelController.main.EndMission();
+        });
+    }
+
+    private void ResolveInvalidCapture() {
+        LevelController.main.SpeedMultiplier = this.catchSpeedMultiplier;
+        AudioClip clickSFX = Resources.Load<AudioClip>("Audio/SFX/wrongCapture");
+        AudioController.main.PlayClip(clickSFX, Mixers.SFX);
+        AudioClip fastForwardSFX = Resources.Load<AudioClip>("Audio/SFX/fastForward");
+        AudioSource fastForwardSource = AudioController.main.PlayClip(fastForwardSFX, Mixers.SFX, 0.2f, true);
+        TimerUI.main.StartTimer(this.invalidCatchTime, () => {
+            LevelController.main.SpeedMultiplier = 1f;
+            AudioController.main.FadeOutClip(fastForwardSource);
+            this.ReleaseCar();
+        });
     }
 
     private void ReleaseCar() {

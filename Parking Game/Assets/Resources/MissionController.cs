@@ -35,16 +35,21 @@ public class BaseMissionSettings {
     public GoalType goalType;
     public Sprite icon;
 
-    [Header("Settings")]
+    [Header("Generation Settings")]
 
     [Tooltip("The minimal level the player should be before this becomes available")]
     public int minLevel;
 
+    [Tooltip("Whether or not this mission type will be used in the random circulation.")]
+    public bool isRandomized = true;
+
+    [Header("Gameplay Settings")]
+
     [Tooltip("The base amount of time the player gets for this mission")]
     public float baseDuration;
 
-    [Tooltip("Whether or not this mission type will be used in the random circulation.")]
-    public bool isRandomized = true;
+    [Tooltip("Whether the player should be unable to move once a car is captured")]
+    public bool lockPlayerDuringCapture = true;
 }
 #endregion
 
@@ -87,6 +92,10 @@ public class MissionController : MonoBehaviour {
             }
         }
         return null;
+    }
+
+    public BaseMissionSettings GetCurrentMissionSettings() {
+        return this.GetMissionSettingsForType(this.CurrentGoalData.goalType);
     }
 
     public LevelData UpdateLevelData(LevelData levelData, int levelIndex) {
