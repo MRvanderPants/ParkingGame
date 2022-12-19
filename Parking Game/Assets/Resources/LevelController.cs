@@ -76,6 +76,7 @@ public class LevelController : MonoBehaviour {
     public void StartGame() {
         this.gameEnded = false;
         this.Score = 0;
+        this.LevelIndex = 0;
         UIController.main.ToggleMainMenu(false);
         this.CreateInitialLevelData();
         this.CreatePlayer();

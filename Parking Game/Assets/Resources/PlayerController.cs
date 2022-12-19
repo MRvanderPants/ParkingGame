@@ -192,6 +192,7 @@ public class PlayerController : MonoBehaviour {
             // Mode to avoid cars for the duration of the mission
             case GoalType.Stealth:
                 new TimedTrigger(1f, () => {
+                    this.ReleaseCar();
                     LevelController.main.EndGame(false);
                 });
                 break;
