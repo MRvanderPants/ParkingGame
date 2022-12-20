@@ -18,6 +18,7 @@ public class LevelController : MonoBehaviour {
 
     public AudioClip LevelMusic;
     public AudioClip LevelMusicIntro;
+    public readonly Observable onMissionChange = new Observable();
 
     private GoalPanelUI goalPanelUI;
     private TargetPanelUI targetPanelUI;
@@ -121,6 +122,7 @@ public class LevelController : MonoBehaviour {
                 PlayerController.main.SetHyperMode(true);
             }
 
+            this.onMissionChange.Next(goalData);
             this.goalPanelUI.StartTimer(goalData, (bool result) => {
                 if (this.gameEnded) { return; }
 

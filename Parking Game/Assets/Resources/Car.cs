@@ -11,6 +11,7 @@ public class Car : MonoBehaviour {
     public byte fadeOutSpeed = 5;
     public bool captured;
     public bool released = false;
+    public bool isExtraCar = false;
     public TrafficRouteType routeType = TrafficRouteType.Default;
 
     private BoxCollider boxCollider;
@@ -51,16 +52,7 @@ public class Car : MonoBehaviour {
     }
 
     public void SetRoute(Vector3[] route, Action onDestroy, TrafficRouteType routeType = TrafficRouteType.Default) {
-        this.boxCollider = this.GetComponent<BoxCollider>();
-        this.bounds = this.boxCollider.bounds;
-        this.initialRoute = route;
-        this.route = route;
-        this.routeType = routeType;
-        this.onDestroy = onDestroy;
-        this.transform.position = this.route[0];
-        this.material = this.transform.Find("Model").GetComponent<MeshRenderer>().material;
-        this.star = this.transform.Find("Star").gameObject;
-        this.star.SetActive(false);
+        this.InitRoute(route, onDestroy, routeType);
         this.StartNextNode();
 
         GoalData goalData = MissionController.main.CurrentGoalData;
@@ -85,6 +77,7 @@ public class Car : MonoBehaviour {
         this.rb.AddForce(force2, ForceMode.Impulse);
         new TimedTrigger(2f, () => {
             this.onDestroy?.Invoke();
+            Destroy(this.gameObject);
         });
     }
 
@@ -106,6 +99,19 @@ public class Car : MonoBehaviour {
     public void Kill() {
         this.onDestroy?.Invoke();
         Destroy(this.gameObject);
+    }
+
+    private void InitRoute(Vector3[] route, Action onDestroy, TrafficRouteType routeType = TrafficRouteType.Default) {
+        this.boxCollider = this.GetComponent<BoxCollider>();
+        this.bounds = this.boxCollider.bounds;
+        this.initialRoute = route;
+        this.route = route;
+        this.routeType = routeType;
+        this.onDestroy = onDestroy;
+        this.transform.position = this.route[0];
+        this.material = this.transform.Find("Model").GetComponent<MeshRenderer>().material;
+        this.star = this.transform.Find("Star").gameObject;
+        this.star.SetActive(false);
     }
 
     private void StartNextNode() {

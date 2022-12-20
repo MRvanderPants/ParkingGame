@@ -10,15 +10,21 @@ public enum TrafficRouteType {
 [ExecuteInEditMode]
 public class TrafficRoute : MonoBehaviour {
 
-    public float minimalSpawnTime = 2f;
-    public Transform[] nodes;
     public TrafficRouteType routeType = TrafficRouteType.Default;
+
+    [Header("Spawn Settings")]
+    public float minimalSpawnTime = 2f;
+    public float randomSpawnMultiplier = 2f;
+    public float hyperMultiplier = 2f;
+    [Space]
+    public Transform[] nodes;
 
     private LineRenderer lineRenderer;
     private Transform start;
     private Transform end;
     private GameObject carPrefab;
     private List<Vector3> positions;
+    private LevelControlledTimedTrigger hyperModeTrigger;
 
     private readonly List<Car> cars = new List<Car>();
 
@@ -34,6 +40,17 @@ public class TrafficRoute : MonoBehaviour {
                     this.SpawnCar();
                 });
             }
+
+            LevelController.main.onMissionChange.Subscribe((object data) => {
+                GoalData goalData = (GoalData)data;
+                if (goalData.goalType == GoalType.HyperMode && this.routeType != TrafficRouteType.Target) {
+                    this.hyperModeTrigger = new LevelControlledTimedTrigger(this.minimalSpawnTime * this.hyperMultiplier, () => {
+                        this.SpawnCar(true);
+                    }, true);
+                } else if (this.hyperModeTrigger != null) {
+                    this.hyperModeTrigger.Destroy();
+                }
+            });
         }
     }
 
@@ -42,15 +59,19 @@ public class TrafficRoute : MonoBehaviour {
         this.DrawLine();
     }
 
-    public void SpawnCar() {
+    public void SpawnCar(bool isExtraCar = false) {
         GameObject car = Instantiate(this.carPrefab);
         Car carCar = car.GetComponent<Car>();
+        carCar.isExtraCar = isExtraCar;
         carCar.SetRoute(this.positions.ToArray(), () => {
             this.cars.Remove(carCar);
-            if (this.routeType == TrafficRouteType.Target) {
+            if (this.routeType == TrafficRouteType.Target || carCar.isExtraCar) {
                 return;
             }
-            float r = UnityEngine.Random.Range(this.minimalSpawnTime, this.minimalSpawnTime * 2f);
+            float r = UnityEngine.Random.Range(
+                this.minimalSpawnTime,
+                this.minimalSpawnTime * this.randomSpawnMultiplier
+            );
             new LevelControlledTimedTrigger(r, () => {
                 this.SpawnCar();
             });
