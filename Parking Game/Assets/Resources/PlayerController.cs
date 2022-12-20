@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour {
     [Header("Misc")]
     public float compassDistance = 1.5f;
     public float minimalInput = 0.5f;
+    public float hyperModeScale = 2.5f;
 
     private Transform model;
     private float targetDriftAngle = 0f;
@@ -40,6 +41,7 @@ public class PlayerController : MonoBehaviour {
     private bool isDrifting = false;
     private bool sfxThrottle = false;
     private bool playingLongSfx = false;
+    private bool hyperMode = false;
     private ParticleSystem captureParticles;
     private GameObject wallHitParticlePrefab;
     private AudioSource driftingAudioSource;
@@ -90,6 +92,12 @@ public class PlayerController : MonoBehaviour {
 
     public void RemoveCollider(Car car) {
         this.colliders.Remove(car);
+    }
+
+    public void SetHyperMode(bool active) {
+        this.hyperMode = active;
+        Vector3 newScale = Vector3.one * (active ? this.hyperModeScale : 1f);
+        this.transform.localScale = newScale;
     }
 
     private void HandleVerticalMovement(float horizontal, float vertical, bool drifting) {
@@ -162,7 +170,13 @@ public class PlayerController : MonoBehaviour {
                 Vector3 myPos = this.transform.position; myPos.z = 0f;
                 Vector3 carPos = car.transform.position; carPos.z = 0f;
                 float distance = Vector3.Distance(myPos, carPos);
-                if (distance < this.minimalCatchDistance) {
+
+                GoalType goalType = MissionController.main.CurrentGoalData.goalType;
+                float catchDistance = goalType == GoalType.HyperMode
+                    ? this.minimalCatchDistance * this.hyperModeScale
+                    : this.minimalCatchDistance;
+
+                if (distance < catchDistance) {
                     this.CaptureCar(car);
                 }
             }
@@ -197,6 +211,10 @@ public class PlayerController : MonoBehaviour {
                 });
                 break;
 
+            case GoalType.HyperMode:
+                this.ResolveHyperCapture();
+                break;
+
             // Default mode to capture a specific car
             case GoalType.CaptureTarget:
             default:
@@ -207,6 +225,14 @@ public class PlayerController : MonoBehaviour {
                 }
                 break;
         }
+    }
+
+    private void ResolveHyperCapture() {
+        AudioClip clickSFX = Resources.Load<AudioClip>("Audio/SFX/capture");
+        AudioController.main.PlayClip(clickSFX, Mixers.SFX);
+        LevelController.main.Score += LevelController.main.LevelIndex;
+        this.capturedCar.Launch();
+        this.capturedCar = null;
     }
 
     private void ResolveValidCapture() {

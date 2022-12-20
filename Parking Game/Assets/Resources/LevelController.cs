@@ -116,10 +116,15 @@ public class LevelController : MonoBehaviour {
             } else {
                 this.targetPanelUI.Hide();
             }
+
+            if (goalData.goalType == GoalType.HyperMode) {
+                PlayerController.main.SetHyperMode(true);
+            }
+
             this.goalPanelUI.StartTimer(goalData, (bool result) => {
                 if (this.gameEnded) { return; }
 
-                if (goalData.goalType == GoalType.Stealth) {
+                if (goalData.goalType == GoalType.Stealth || goalData.goalType == GoalType.HyperMode) {
                     this.EndMission();
                 } else {
                     this.EndGame(result);
@@ -130,6 +135,11 @@ public class LevelController : MonoBehaviour {
 
     public void EndMission() {
         this.Score += this.levelIndex;
+        GoalData goalData = MissionController.main.CurrentGoalData;
+        if (goalData.goalType == GoalType.HyperMode) {
+            PlayerController.main.SetHyperMode(false);
+        }
+
         bool hasEnded = MissionController.main.EndMission();
         if (hasEnded) {
             this.StartLevel();

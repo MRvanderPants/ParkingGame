@@ -20,11 +20,20 @@ public class Car : MonoBehaviour {
     private float startTime = -1f;
     private float journeyLength;
     private bool startPointRemoved = false;
+    private bool stopMovement = false;
     private Action onDestroy;
     private GameObject star;
+    private Rigidbody rb;
+    private ParticleSystem particles;
+
+    private void Start() {
+        this.particles = this.GetComponent<ParticleSystem>();
+        this.rb = this.GetComponent<Rigidbody>();
+        this.rb.isKinematic = true;
+    }
 
     private void Update() {
-        if (!this.captured && this.startTime != -1f) {
+        if (!this.captured && this.startTime != -1f && !this.stopMovement) {
             this.HandleMovement();
         }
     }
@@ -59,6 +68,24 @@ public class Car : MonoBehaviour {
             this.material.color = goalData.targetColour;
             this.star.SetActive(true);
         }
+    }
+
+    public void Launch() {
+        this.captured = false;
+        this.released = true;
+        this.stopMovement = true;
+        this.rb.isKinematic = false;
+
+        this.particles.Play();
+        Vector3 vector = PlayerController.main.transform.up;
+        vector.x += UnityEngine.Random.Range(-0.3f, 0.3f);
+        vector.y += UnityEngine.Random.Range(-0.3f, 0.3f);
+        Vector3 force2 = vector * 20f;
+        force2.z = -5f;
+        this.rb.AddForce(force2, ForceMode.Impulse);
+        new TimedTrigger(2f, () => {
+            this.onDestroy?.Invoke();
+        });
     }
 
     public void Release() {
