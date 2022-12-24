@@ -8,6 +8,7 @@ public class Car : MonoBehaviour {
     [HideInInspector] public Bounds bounds;
 
     public float movementSpeed = 2f;
+    public float explosionVolume = 0.125f;
     public byte fadeOutSpeed = 5;
     public bool captured;
     public bool released = false;
@@ -26,11 +27,18 @@ public class Car : MonoBehaviour {
     private GameObject star;
     private Rigidbody rb;
     private ParticleSystem particles;
+    private AudioClip[] explosions;
 
     private void Start() {
         this.particles = this.GetComponent<ParticleSystem>();
         this.rb = this.GetComponent<Rigidbody>();
         this.rb.isKinematic = true;
+        this.explosions = new AudioClip[4] {
+            Resources.Load<AudioClip>("Audio/SFX/explosion1"),
+            Resources.Load<AudioClip>("Audio/SFX/explosion2"),
+            Resources.Load<AudioClip>("Audio/SFX/explosion3"),
+            Resources.Load<AudioClip>("Audio/SFX/explosion4")
+        };
     }
 
     private void Update() {
@@ -99,6 +107,11 @@ public class Car : MonoBehaviour {
     public void Kill() {
         this.onDestroy?.Invoke();
         Destroy(this.gameObject);
+    }
+
+    public void PlayExplosionSFX() {
+        int r = UnityEngine.Random.Range(0, this.explosions.Length - 1);
+        AudioController.main.PlayClip(this.explosions[r], Mixers.SFX, this.explosionVolume);
     }
 
     private void InitRoute(Vector3[] route, Action onDestroy, TrafficRouteType routeType = TrafficRouteType.Default) {

@@ -156,19 +156,19 @@ public class MissionController : MonoBehaviour {
                 targetPrefab = Resources.Load<GameObject>("Prefabs/Car"),
                 targetColour = this.GenerateColor(),
             });
+        }
 
-            // Check to see if we need to add hyper mode
-            BaseMissionSettings hyperModeSettings = this.GetMissionSettingsForType(GoalType.HyperMode);
-            if (levelData.levelIndex >= hyperModeSettings.minLevel) {
-                float hyperTimeLimit = this.CalculateTimeLimit(hyperModeSettings, levelData);
-                goalList.Add(new GoalData() {
-                    goalType = GoalType.HyperMode,
-                    value = 0,
-                    timeLimit = hyperTimeLimit,
-                    targetPrefab = Resources.Load<GameObject>("Prefabs/Car"),
-                    targetColour = this.GenerateColor(),
-                });
-            }
+        // Check to see if we need to add hyper mode
+        BaseMissionSettings hyperModeSettings = this.GetMissionSettingsForType(GoalType.HyperMode);
+        if (levelData.levelIndex >= hyperModeSettings.minLevel) {
+            float hyperTimeLimit = this.CalculateTimeLimit(hyperModeSettings, levelData);
+            goalList.Add(new GoalData() {
+                goalType = GoalType.HyperMode,
+                value = 0,
+                timeLimit = hyperTimeLimit,
+                targetPrefab = Resources.Load<GameObject>("Prefabs/Car"),
+                targetColour = this.GenerateColor(),
+            });
         }
         return goalList;
     }

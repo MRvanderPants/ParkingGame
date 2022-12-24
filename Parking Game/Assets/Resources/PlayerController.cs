@@ -28,10 +28,14 @@ public class PlayerController : MonoBehaviour {
     public AudioClip[] collisionSoundSFX;
     public AudioClip[] collisionAdditionalSoundSFX;
 
+    [Header("Hyper Mode")]
+    public float hyperModeScale = 2.5f;
+    public float hyperModeScaleSpeed = 1.025f;
+    public float hyperModeImpactDuration = 0.33f;
+
     [Header("Misc")]
     public float compassDistance = 1.5f;
     public float minimalInput = 0.5f;
-    public float hyperModeScale = 2.5f;
 
     private Transform model;
     private float targetDriftAngle = 0f;
@@ -97,7 +101,8 @@ public class PlayerController : MonoBehaviour {
     public void SetHyperMode(bool active) {
         this.hyperMode = active;
         Vector3 newScale = Vector3.one * (active ? this.hyperModeScale : 1f);
-        this.transform.localScale = newScale;
+        DynamicScale ds = this.gameObject.AddComponent<DynamicScale>();
+        ds.Init(newScale, this.hyperModeScaleSpeed);
     }
 
     private void HandleVerticalMovement(float horizontal, float vertical, bool drifting) {
@@ -231,8 +236,13 @@ public class PlayerController : MonoBehaviour {
         AudioClip clickSFX = Resources.Load<AudioClip>("Audio/SFX/capture");
         AudioController.main.PlayClip(clickSFX, Mixers.SFX);
         LevelController.main.Score += LevelController.main.LevelIndex;
-        this.capturedCar.Launch();
-        this.capturedCar = null;
+        this.capturedCar.PlayExplosionSFX();
+        new TimedTrigger(this.hyperModeImpactDuration, () => {
+            if (this.capturedCar != null) {
+                this.capturedCar.Launch();
+            }
+            this.capturedCar = null;
+        });
     }
 
     private void ResolveValidCapture() {
@@ -300,14 +310,14 @@ public class PlayerController : MonoBehaviour {
         });
 
         int r0 = UnityEngine.Random.Range(0, this.collisionSoundSFX.Length);
-        AudioController.main.PlayClip(this.collisionSoundSFX[r0], Mixers.SFX, 0.2f);
+        AudioController.main.PlayClip(this.collisionSoundSFX[r0], Mixers.SFX, 0.1f);
 
         if (!this.playingLongSfx) {
             int r1 = UnityEngine.Random.Range(0, this.collisionAdditionalSoundSFX.Length);
             int r2 = UnityEngine.Random.Range(0, 10);
             if (r2 > 7) {
                 this.playingLongSfx = true;
-                AudioController.main.PlayClip(this.collisionAdditionalSoundSFX[r1], Mixers.SFX, 0.3f);
+                AudioController.main.PlayClip(this.collisionAdditionalSoundSFX[r1], Mixers.SFX, 0.2f);
                 new TimedTrigger(2f, () => {
                     this.playingLongSfx = false;
                 });

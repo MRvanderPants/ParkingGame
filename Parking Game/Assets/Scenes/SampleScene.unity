@@ -9961,13 +9961,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdd59926b10541a43b30e38cafd43503, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  routeType: 1
   minimalSpawnTime: 3.75
+  randomSpawnMultiplier: 2
+  hyperMultiplier: 2
   nodes:
   - {fileID: 3588861271693914142}
   - {fileID: 3588861271358702496}
   - {fileID: 118354332}
   - {fileID: 1268405712}
-  routeType: 1
 --- !u!4 &1115982515
 Transform:
   m_ObjectHideFlags: 0
@@ -14698,13 +14700,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdd59926b10541a43b30e38cafd43503, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  routeType: 1
   minimalSpawnTime: 3.75
+  randomSpawnMultiplier: 2
+  hyperMultiplier: 2
   nodes:
   - {fileID: 246883236}
   - {fileID: 2094876500673878671}
   - {fileID: 1301789499}
   - {fileID: 375671706}
-  routeType: 1
 --- !u!4 &1576802623
 Transform:
   m_ObjectHideFlags: 0
@@ -17961,12 +17965,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdd59926b10541a43b30e38cafd43503, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  routeType: 0
   minimalSpawnTime: 1.5
+  randomSpawnMultiplier: 2
+  hyperMultiplier: 2
   nodes:
   - {fileID: 1750919842}
   - {fileID: 1571309116}
   - {fileID: 1301789499}
-  routeType: 0
 --- !u!1 &2008814260
 GameObject:
   m_ObjectHideFlags: 0
@@ -18597,7 +18603,7 @@ MonoBehaviour:
     isRandomized: 0
     notInARow: 0
     baseDuration: 35
-    lockPlayerDuringCapture: 0
+    lockPlayerDuringCapture: 1
     scoreMultiplierActive: 1
 --- !u!1 &2118524535
 GameObject:
@@ -19602,11 +19608,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdd59926b10541a43b30e38cafd43503, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  routeType: 0
   minimalSpawnTime: 3.75
+  randomSpawnMultiplier: 2
+  hyperMultiplier: 2
   nodes:
   - {fileID: 2094876500673878671}
   - {fileID: 2094876501413361169}
-  routeType: 0
 --- !u!120 &2094876500978777453
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -22911,12 +22919,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdd59926b10541a43b30e38cafd43503, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  routeType: 0
   minimalSpawnTime: 2
+  randomSpawnMultiplier: 2
+  hyperMultiplier: 2
   nodes:
   - {fileID: 3588861271693914142}
   - {fileID: 3588861271879736448}
   - {fileID: 3588861272150745479}
-  routeType: 0
 --- !u!4 &3588861271358702496
 Transform:
   m_ObjectHideFlags: 0
@@ -23398,12 +23408,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdd59926b10541a43b30e38cafd43503, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  routeType: 0
   minimalSpawnTime: 3.75
+  randomSpawnMultiplier: 2
+  hyperMultiplier: 2
   nodes:
   - {fileID: 3588861272215170878}
   - {fileID: 3588861271358702496}
   - {fileID: 3588861271623204519}
-  routeType: 0
 --- !u!4 &3588861271879736448
 Transform:
   m_ObjectHideFlags: 0

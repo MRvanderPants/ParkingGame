@@ -151,6 +151,8 @@ MonoBehaviour:
   collisionAdditionalSoundSFX:
   - {fileID: 8300000, guid: 8f601f0a342508c4d89fe019d131ee0f, type: 3}
   - {fileID: 8300000, guid: 4ac580fa8ad3b104a9331dbbc7ef3f7c, type: 3}
+  hyperModeScale: 2.5
+  hyperModeImpactDuration: 0.25
   compassDistance: 1.5
   minimalInput: 0.25
 --- !u!54 &2667280568565938742
