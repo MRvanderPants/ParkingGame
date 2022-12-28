@@ -77,7 +77,9 @@ public class LevelController : MonoBehaviour {
     public void StartGame() {
         this.gameEnded = false;
         this.Score = 0;
+        this.levelIndex = 0;
         this.LevelIndex = 0;
+        this.levelData = null;
         UIController.main.ToggleMainMenu(false);
         this.CreateInitialLevelData();
         this.CreatePlayer();
@@ -111,7 +113,7 @@ public class LevelController : MonoBehaviour {
     private void StartMission() {
         new TimedTrigger(0.05f, () => {
             GoalData goalData = MissionController.main.CurrentGoalData;
-            if (goalData.goalType != GoalType.Stealth) {
+            if (goalData.goalType != GoalType.Stealth && goalData.goalType != GoalType.HyperMode) {
                 this.targetPanelUI.SetTarget(goalData);
                 this.ActivateRandomTargetRoute();
             } else {
@@ -120,6 +122,11 @@ public class LevelController : MonoBehaviour {
 
             if (goalData.goalType == GoalType.HyperMode) {
                 PlayerController.main.SetHyperMode(true);
+            }
+
+            BaseMissionSettings settings = MissionController.main.GetMissionSettingsForType(goalData.goalType);
+            if (settings.overwriteMusic != null) {
+                AudioController.main.PlayMusic(settings.overwriteMusic);
             }
 
             this.onMissionChange.Next(goalData);
@@ -140,6 +147,11 @@ public class LevelController : MonoBehaviour {
         GoalData goalData = MissionController.main.CurrentGoalData;
         if (goalData.goalType == GoalType.HyperMode) {
             PlayerController.main.SetHyperMode(false);
+        }
+
+        BaseMissionSettings settings = MissionController.main.GetMissionSettingsForType(goalData.goalType);
+        if (settings.overwriteMusic != null) {
+            AudioController.main.PlayMusic(this.LevelMusicIntro, this.LevelMusic);
         }
 
         bool hasEnded = MissionController.main.EndMission();

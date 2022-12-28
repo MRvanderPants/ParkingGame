@@ -8866,7 +8866,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 71.99997, y: 300.00003}
+  m_AnchoredPosition: {x: 72, y: 300.00003}
   m_SizeDelta: {x: 788, y: 108}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &1032009387
@@ -15884,7 +15884,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 354, y: -54.12999}
+  m_AnchoredPosition: {x: 354, y: -54.130005}
   m_SizeDelta: {x: 124, y: 124}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1733419279
@@ -18447,7 +18447,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 852, y: 536}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -18559,50 +18559,60 @@ MonoBehaviour:
     description: Find the highlighted car before the time runs out
     goalType: 0
     icon: {fileID: -25847542, guid: d765ac01337fb2f47bc3426769311220, type: 3}
+    overwriteMusic: {fileID: 0}
     minLevel: 0
     isRandomized: 1
     notInARow: 0
     baseDuration: 40
+    forceBaseDuration: 0
     lockPlayerDuringCapture: 1
     scoreMultiplierActive: 0
   - name: Private parking
     description: Avoid parking any cars and run out the clock
     goalType: 1
     icon: {fileID: 340363830, guid: d765ac01337fb2f47bc3426769311220, type: 3}
+    overwriteMusic: {fileID: 0}
     minLevel: 3
     isRandomized: 1
     notInARow: 1
     baseDuration: 20
+    forceBaseDuration: 0
     lockPlayerDuringCapture: 1
     scoreMultiplierActive: 0
   - name: Parking Police
     description: Find misparked cars and give them a ticket
     goalType: 2
     icon: {fileID: -160324257, guid: d765ac01337fb2f47bc3426769311220, type: 3}
+    overwriteMusic: {fileID: 0}
     minLevel: 3
     isRandomized: 0
     notInARow: 0
     baseDuration: 30
+    forceBaseDuration: 0
     lockPlayerDuringCapture: 1
     scoreMultiplierActive: 0
   - name: Crazy Capture
     description: Move the car to the destination
     goalType: 3
     icon: {fileID: -2086923457, guid: d765ac01337fb2f47bc3426769311220, type: 3}
+    overwriteMusic: {fileID: 0}
     minLevel: 7
     isRandomized: 0
     notInARow: 0
     baseDuration: 37.5
+    forceBaseDuration: 0
     lockPlayerDuringCapture: 0
     scoreMultiplierActive: 0
   - name: Hyper Mode
     description: Catch all the cars!
     goalType: 4
     icon: {fileID: 443064161, guid: d765ac01337fb2f47bc3426769311220, type: 3}
+    overwriteMusic: {fileID: 8300000, guid: c32e97e95d3de934f8ee11b16c14316f, type: 3}
     minLevel: 3
     isRandomized: 0
     notInARow: 0
-    baseDuration: 35
+    baseDuration: 36
+    forceBaseDuration: 1
     lockPlayerDuringCapture: 1
     scoreMultiplierActive: 1
 --- !u!1 &2118524535

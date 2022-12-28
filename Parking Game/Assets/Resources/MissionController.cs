@@ -34,6 +34,8 @@ public class BaseMissionSettings {
     public string description;
     public GoalType goalType;
     public Sprite icon;
+    [Tooltip("If set, overwrites the default music for the duration of the mission")]
+    public AudioClip overwriteMusic;
 
     [Header("Generation Settings")]
 
@@ -50,6 +52,9 @@ public class BaseMissionSettings {
 
     [Tooltip("The base amount of time the player gets for this mission")]
     public float baseDuration;
+
+    [Tooltip("Check this to ignore the automated mission shortening")]
+    public bool forceBaseDuration;
 
     [Tooltip("Whether the player should be unable to move once a car is captured")]
     public bool lockPlayerDuringCapture = true;
@@ -174,6 +179,10 @@ public class MissionController : MonoBehaviour {
     }
 
     private float CalculateTimeLimit(BaseMissionSettings settings, LevelData levelData) {
+        if (settings.forceBaseDuration) {
+            return settings.baseDuration;
+        }
+
         return Mathf.Max(
             settings.baseDuration * (1f - (0.05f * levelData.levelIndex)),
             10f
