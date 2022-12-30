@@ -44,12 +44,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: UI
-    uniqueID: 2641720865
+  - name: Underlay
+    uniqueID: 3251420959
+    locked: 0
+  - name: LevelObjects
+    uniqueID: 213402009
     locked: 0
   - name: Overtiles
     uniqueID: 3883581873
     locked: 0
   - name: Player
     uniqueID: 2905991609
+    locked: 0
+  - name: UI
+    uniqueID: 2641720865
     locked: 0
