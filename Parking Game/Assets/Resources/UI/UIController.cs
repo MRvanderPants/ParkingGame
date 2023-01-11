@@ -37,6 +37,7 @@ public class UIController : MonoBehaviour {
         this.mainMenuPanel.gameObject.SetActive(state);
         if (state) {
             AudioController.main.PlayMusic(this.MainMenuMusic);
+            TileColourController.main.Init(120);
         } else {
             AudioController.main.StopMixer(Mixers.Music);
         }
@@ -46,6 +47,7 @@ public class UIController : MonoBehaviour {
         this.highscorePanel.gameObject.SetActive(state);
         if(state) {
             AudioController.main.PlayMusic(this.HighscoreMusic);
+            TileColourController.main.Init(150);
             this.highscorePanel.GetComponent<HighscoreUI>().Activate();
         } else {
             AudioController.main.StopMixer(Mixers.Music);

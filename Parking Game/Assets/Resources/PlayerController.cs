@@ -32,6 +32,8 @@ public class PlayerController : MonoBehaviour {
     public float hyperModeScale = 2.5f;
     public float hyperModeScaleSpeed = 1.025f;
     public float hyperModeImpactDuration = 0.33f;
+    public float hyperModeBlinkDuration = 0.1f;
+    public int hyperModeBlinkAmount = 20;
 
     [Header("Misc")]
     public float compassDistance = 1.5f;
@@ -45,7 +47,6 @@ public class PlayerController : MonoBehaviour {
     private bool isDrifting = false;
     private bool sfxThrottle = false;
     private bool playingLongSfx = false;
-    private bool hyperMode = false;
     private ParticleSystem captureParticles;
     private GameObject wallHitParticlePrefab;
     private AudioSource driftingAudioSource;
@@ -99,10 +100,13 @@ public class PlayerController : MonoBehaviour {
     }
 
     public void SetHyperMode(bool active) {
-        this.hyperMode = active;
         Vector3 newScale = Vector3.one * (active ? this.hyperModeScale : 1f);
         DynamicScale ds = this.gameObject.AddComponent<DynamicScale>();
         ds.Init(newScale, this.hyperModeScaleSpeed);
+
+        if (active) {
+            this.StartBlinker();
+        }
     }
 
     private void HandleVerticalMovement(float horizontal, float vertical, bool drifting) {
@@ -188,7 +192,6 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    // TODO handle capturing for different game modes
     private void CaptureCar(Car car) {
         BaseMissionSettings missionSettings = MissionController.main.GetCurrentMissionSettings();
         if (missionSettings.lockPlayerDuringCapture) {
@@ -371,5 +374,18 @@ public class PlayerController : MonoBehaviour {
             Destroy(this.compasses[i]);
         }
         this.compasses.Clear();
+    }
+
+    private void StartBlinker() {
+        GoalData goalData = MissionController.main.CurrentGoalData;
+        float stopTime = Time.time + goalData.timeLimit;
+        new TimedTrigger(goalData.timeLimit * (1f - this.hyperModeBlinkDuration), () => {
+            Blinker blinker = this.model.gameObject.AddComponent<Blinker>();
+            blinker.Init(
+                stopTime,
+                this.hyperModeBlinkAmount,
+                this.model.GetComponent<SpriteRenderer>()
+            );
+        });
     }
 }

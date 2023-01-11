@@ -190,7 +190,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 898f361c15da59849b1d7f4bcc2e14c5, type: 2}
+  - {fileID: 2100000, guid: 4c84ba39ec4d56e498a345671f933a57, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -464,7 +464,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 898f361c15da59849b1d7f4bcc2e14c5, type: 2}
+  - {fileID: 2100000, guid: 4c84ba39ec4d56e498a345671f933a57, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -864,6 +864,7 @@ GameObject:
   - component: {fileID: 231342146}
   - component: {fileID: 231342148}
   - component: {fileID: 231342147}
+  - component: {fileID: 231342149}
   m_Layer: 0
   m_Name: Roads
   m_TagString: Untagged
@@ -906,7 +907,7 @@ TilemapRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a25876bfbf340f945b8ca8e0c1385e87, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1253,6 +1254,27 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!114 &231342149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 231342145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3da921d38aa292a4e8d15dd01690fb39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colours:
+  - serializedVersion: 2
+    rgba: 4283240049
+  - serializedVersion: 2
+    rgba: 4280981759
+  - serializedVersion: 2
+    rgba: 4282755128
+  - serializedVersion: 2
+    rgba: 4293364614
 --- !u!1 &235048914
 GameObject:
   m_ObjectHideFlags: 0
@@ -3516,7 +3538,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 898f361c15da59849b1d7f4bcc2e14c5, type: 2}
+  - {fileID: 2100000, guid: 4c84ba39ec4d56e498a345671f933a57, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8039,7 +8061,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 898f361c15da59849b1d7f4bcc2e14c5, type: 2}
+  - {fileID: 2100000, guid: 4c84ba39ec4d56e498a345671f933a57, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8233,7 +8255,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 898f361c15da59849b1d7f4bcc2e14c5, type: 2}
+  - {fileID: 2100000, guid: 4c84ba39ec4d56e498a345671f933a57, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -11682,6 +11704,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LevelMusic: {fileID: 8300000, guid: 7edf1cb39a6512643b284cf6f764c57e, type: 3}
   LevelMusicIntro: {fileID: 8300000, guid: 15f2e307c7a38c94ab8bcecbe4fb713f, type: 3}
+  LevelMusicOutro: {fileID: 8300000, guid: aa278c0fe8071464f87959fae3ed1082, type: 3}
 --- !u!114 &2105709350
 MonoBehaviour:
   m_ObjectHideFlags: 0
