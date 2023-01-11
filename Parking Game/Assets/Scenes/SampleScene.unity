@@ -11704,7 +11704,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LevelMusic: {fileID: 8300000, guid: 7edf1cb39a6512643b284cf6f764c57e, type: 3}
   LevelMusicIntro: {fileID: 8300000, guid: 15f2e307c7a38c94ab8bcecbe4fb713f, type: 3}
-  LevelMusicOutro: {fileID: 8300000, guid: aa278c0fe8071464f87959fae3ed1082, type: 3}
 --- !u!114 &2105709350
 MonoBehaviour:
   m_ObjectHideFlags: 0

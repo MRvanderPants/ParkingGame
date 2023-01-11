@@ -213,6 +213,8 @@ public class PlayerController : MonoBehaviour {
 
             // Mode to avoid cars for the duration of the mission
             case GoalType.Stealth:
+                AudioClip capSFX = Resources.Load<AudioClip>("Audio/SFX/wrongCapture");
+                AudioController.main.PlayClip(capSFX, Mixers.SFX);
                 new TimedTrigger(1f, () => {
                     this.ReleaseCar();
                     LevelController.main.EndGame(false);
