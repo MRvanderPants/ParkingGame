@@ -217,7 +217,7 @@ public class PlayerController : MonoBehaviour {
                 AudioController.main.PlayClip(capSFX, Mixers.SFX);
                 new TimedTrigger(1f, () => {
                     this.ReleaseCar();
-                    LevelController.main.EndGame(false);
+                    LevelController.main.EndGame();
                 });
                 break;
 

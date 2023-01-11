@@ -88,9 +88,11 @@ public class MissionController : MonoBehaviour {
         MissionController.main = this;
     }
 
-    public List<GoalData> GenerateMissions(LevelData levelData) {
-        this.missions.AddRange(this.GenerateGoalData(levelData));
-        return this.missions;
+    public LevelData ResetLevelData(LevelData levelData, int levelIndex) {
+        LevelData lvlData = MissionController.main.UpdateLevelData(levelData, levelIndex);
+        this.ResetMissions();
+        this.GenerateMissions(lvlData);
+        return lvlData;
     }
 
     public bool EndMission() {
@@ -133,6 +135,16 @@ public class MissionController : MonoBehaviour {
     public int GetMissionCountForLevelIndex(int levelIndex) {
         int missionCount = Mathf.RoundToInt(levelIndex * this.missionCountMultiplier);
         return Mathf.Max(1, missionCount);
+    }
+
+    private void ResetMissions() {
+        this.missions.Clear();
+        this.lastGoalType = GoalType.CaptureTarget;
+    }
+
+    private List<GoalData> GenerateMissions(LevelData levelData) {
+        this.missions.AddRange(this.GenerateGoalData(levelData));
+        return this.missions;
     }
 
     private GoalType GenerateGoalType(LevelData levelData) {

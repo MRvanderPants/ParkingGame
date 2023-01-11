@@ -90,7 +90,7 @@ public class LevelController : MonoBehaviour {
         });
     }
 
-    public void EndGame(bool result) {
+    public void EndGame() {
         this.gameEnded = true;
         UIController.main.ToggleHighscores(true);
         for (int i = 0; i < this.targetRoutes.Length; i++) {
@@ -104,8 +104,7 @@ public class LevelController : MonoBehaviour {
 
     private void StartLevel() {
         this.LevelIndex = this.levelIndex + 1;
-        this.levelData = MissionController.main.UpdateLevelData(this.levelData, this.levelIndex);
-        MissionController.main.GenerateMissions(this.levelData);
+        this.levelData = MissionController.main.ResetLevelData(this.levelData, this.LevelIndex);
         this.StartMission();
     }
 
@@ -136,7 +135,7 @@ public class LevelController : MonoBehaviour {
                 if (goalData.goalType == GoalType.Stealth || goalData.goalType == GoalType.HyperMode) {
                     this.EndMission();
                 } else {
-                    this.EndGame(result);
+                    this.EndGame();
                 }
             });
         });
