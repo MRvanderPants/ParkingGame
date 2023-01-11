@@ -11733,6 +11733,31 @@ MonoBehaviour:
   musicMixer: {fileID: 484482960990027254, guid: a3aea2f4295ac484d8f859f226585faf, type: 2}
   sfxMixer: {fileID: -7210757149807568455, guid: a3aea2f4295ac484d8f859f226585faf, type: 2}
   uiMixer: {fileID: -3795171777599927050, guid: a3aea2f4295ac484d8f859f226585faf, type: 2}
+  SFXConfigs:
+  - name: capture
+    audioClip: {fileID: 8300000, guid: 9c2c144e7fe8b464f8a9ff77d78cd16a, type: 3}
+    volume: 0.5
+  - name: wrongCapture
+    audioClip: {fileID: 8300000, guid: 8757bcd0ec07d814fa8583485278562d, type: 3}
+    volume: 0.5
+  - name: fastForward
+    audioClip: {fileID: 8300000, guid: d284021b24b1b504398ec4ab43250d3a, type: 3}
+    volume: 0.2
+  - name: pop
+    audioClip: {fileID: 8300000, guid: 269061995dc693546b279ba661faf02b, type: 3}
+    volume: 0.66
+  - name: stretchOut
+    audioClip: {fileID: 8300000, guid: 6aca62186d80b28479c06af245e0d71c, type: 3}
+    volume: 0.66
+  - name: stretch
+    audioClip: {fileID: 8300000, guid: aabd882435c2f2c46ad2e0404567fa6f, type: 3}
+    volume: 0.66
+  - name: select_action
+    audioClip: {fileID: 8300000, guid: ff0e04f5e6a072542b932f8641841809, type: 3}
+    volume: 0.5
+  - name: click
+    audioClip: {fileID: 8300000, guid: 9320b951c4ccc2b4bae8fe81ba74136e, type: 3}
+    volume: 0.5
 --- !u!114 &2105709352
 MonoBehaviour:
   m_ObjectHideFlags: 0

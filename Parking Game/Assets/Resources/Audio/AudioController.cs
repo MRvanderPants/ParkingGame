@@ -9,6 +9,13 @@ public enum Mixers {
     UI
 }
 
+[System.Serializable]
+public class SFXConfig {
+    public string name;
+    public AudioClip audioClip;
+    public float volume = 0.5f;
+}
+
 public class AudioController : MonoBehaviour {
 
     public static AudioController main;
@@ -16,6 +23,9 @@ public class AudioController : MonoBehaviour {
     public AudioMixerGroup musicMixer;
     public AudioMixerGroup sfxMixer;
     public AudioMixerGroup uiMixer;
+
+    [Space]
+    public SFXConfig[] SFXConfigs;
 
     private AudioSource activeMusicPlayer;
 
@@ -84,6 +94,11 @@ public class AudioController : MonoBehaviour {
         };
     }
 
+    public AudioSource PlayClip(string clipName, Mixers mixer = Mixers.SFX, bool looping = false) {
+        SFXConfig config = this.GetConfigByName(clipName);
+        return this.PlayClip(config.audioClip, mixer, config.volume, looping);
+    }
+
     public AudioSource PlayClip(AudioClip clip, Mixers mixer, float volume = 0.5f, bool looping = false) {
         AudioSource source = this.FindFirstAvailableSource(mixer);
         source.clip = clip;
@@ -103,6 +118,15 @@ public class AudioController : MonoBehaviour {
                 this.sources[i].Stop();
             }
         }
+    }
+
+    public SFXConfig GetConfigByName(string name) {
+        for (int i = 0; i < this.SFXConfigs.Length; i++) {
+            if (this.SFXConfigs[i].name == name) {
+                return this.SFXConfigs[i];
+            }
+        }
+        return null;
     }
 
     private AudioSource FindFirstAvailableSource(Mixers mixer) {

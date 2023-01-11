@@ -213,8 +213,7 @@ public class PlayerController : MonoBehaviour {
 
             // Mode to avoid cars for the duration of the mission
             case GoalType.Stealth:
-                AudioClip capSFX = Resources.Load<AudioClip>("Audio/SFX/wrongCapture");
-                AudioController.main.PlayClip(capSFX, Mixers.SFX);
+                AudioController.main.PlayClip("wrongCapture");
                 new TimedTrigger(1f, () => {
                     this.ReleaseCar();
                     LevelController.main.EndGame();
@@ -238,8 +237,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void ResolveHyperCapture() {
-        AudioClip clickSFX = Resources.Load<AudioClip>("Audio/SFX/capture");
-        AudioController.main.PlayClip(clickSFX, Mixers.SFX);
+        AudioController.main.PlayClip("capture");
         LevelController.main.Score += LevelController.main.LevelIndex;
         this.capturedCar.PlayExplosionSFX();
         new TimedTrigger(this.hyperModeImpactDuration, () => {
@@ -251,8 +249,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void ResolveValidCapture() {
-        AudioClip clickSFX = Resources.Load<AudioClip>("Audio/SFX/capture");
-        AudioController.main.PlayClip(clickSFX, Mixers.SFX);
+        AudioController.main.PlayClip("capture");
         TimerUI.main.StartTimer(this.targetCatchTime, () => {
             this.ReleaseCar();
             LevelController.main.EndMission();
@@ -261,10 +258,8 @@ public class PlayerController : MonoBehaviour {
 
     private void ResolveInvalidCapture() {
         LevelController.main.SpeedMultiplier = this.catchSpeedMultiplier;
-        AudioClip clickSFX = Resources.Load<AudioClip>("Audio/SFX/wrongCapture");
-        AudioController.main.PlayClip(clickSFX, Mixers.SFX);
-        AudioClip fastForwardSFX = Resources.Load<AudioClip>("Audio/SFX/fastForward");
-        AudioSource fastForwardSource = AudioController.main.PlayClip(fastForwardSFX, Mixers.SFX, 0.2f, true);
+        AudioController.main.PlayClip("wrongCapture");
+        AudioSource fastForwardSource = AudioController.main.PlayClip("fastForward", Mixers.SFX, true);
         TimerUI.main.StartTimer(this.invalidCatchTime, () => {
             LevelController.main.SpeedMultiplier = 1f;
             AudioController.main.FadeOutClip(fastForwardSource);
