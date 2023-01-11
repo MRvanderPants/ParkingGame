@@ -16,6 +16,7 @@ public class TrafficRoute : MonoBehaviour {
     public float minimalSpawnTime = 2f;
     public float randomSpawnMultiplier = 2f;
     public float hyperMultiplier = 2f;
+    public float stealthMultiplier = 4f;
     [Space]
     public Transform[] nodes;
 
@@ -25,6 +26,7 @@ public class TrafficRoute : MonoBehaviour {
     private GameObject carPrefab;
     private List<Vector3> positions;
     private LevelControlledTimedTrigger hyperModeTrigger;
+    private LevelControlledTimedTrigger stealthModeModeTrigger;
 
     private readonly List<Car> cars = new List<Car>();
 
@@ -43,12 +45,26 @@ public class TrafficRoute : MonoBehaviour {
 
             LevelController.main.onMissionChange.Subscribe((object data) => {
                 GoalData goalData = (GoalData)data;
-                if (goalData.goalType == GoalType.HyperMode && this.routeType != TrafficRouteType.Target) {
-                    this.hyperModeTrigger = new LevelControlledTimedTrigger(this.minimalSpawnTime * this.hyperMultiplier, () => {
-                        this.SpawnCar(true);
-                    }, true);
+                if (this.routeType != TrafficRouteType.Target) {
+                    switch(goalData.goalType) {
+                        case GoalType.HyperMode:
+                            this.hyperModeTrigger = new LevelControlledTimedTrigger(this.minimalSpawnTime * this.hyperMultiplier, () => {
+                                this.SpawnCar(true);
+                            }, true);
+                            break;
+
+                        case GoalType.Stealth:
+                            this.stealthModeModeTrigger = new LevelControlledTimedTrigger(this.minimalSpawnTime * this.stealthMultiplier, () => {
+                                this.SpawnCar(true);
+                            }, true);
+                            break;
+
+                        default: break;
+                    }
                 } else if (this.hyperModeTrigger != null) {
                     this.hyperModeTrigger.Destroy();
+                } else if (this.stealthModeModeTrigger != null) {
+                    this.stealthModeModeTrigger.Destroy();
                 }
             });
         }
