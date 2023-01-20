@@ -100,6 +100,10 @@ public class LevelController : MonoBehaviour {
             Destroy(PlayerController.main.gameObject);
         }
     }
+
+    public void QuitGame() {
+        Application.Quit();
+    }
     #endregion
 
     private void StartLevel() {

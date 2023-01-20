@@ -182,7 +182,9 @@ public class AudioController : MonoBehaviour {
             }
         }
         for (int j = 0; j < toRemove.Count; j++) {
-            this.fadeSources.RemoveAt(toRemove[j]);
+            if (j <= this.fadeSources.Count) {
+                this.fadeSources.RemoveAt(toRemove[j]);
+            }
         }
     }
 }

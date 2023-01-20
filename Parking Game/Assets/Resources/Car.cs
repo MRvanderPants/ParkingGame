@@ -41,7 +41,7 @@ public class Car : MonoBehaviour {
         };
     }
 
-    private void Update() {
+    private void FixedUpdate() {
         if (!this.captured && this.startTime != -1f && !this.stopMovement) {
             this.HandleMovement();
         }

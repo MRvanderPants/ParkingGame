@@ -115,10 +115,9 @@ public class PlayerController : MonoBehaviour {
             speed *= this.turnSpeedReduction;
         }
 
-        if (vertical > this.minimalInput) {
+        if (vertical >= 0) {
             this.rb.velocity = this.transform.up * speed;
-        }
-        else if (vertical < -this.minimalInput) {
+        } else if (vertical < -this.minimalInput) {
             this.rb.velocity = -this.transform.up * speed * this.backwardSpeedReduction;
         } else {
             this.rb.velocity = Vector3.zero;
@@ -126,7 +125,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void HandleHorizontalMovement(float horizontal, float vertical, bool drifting) {
-        if (vertical == 0 || this.rb.velocity == Vector3.zero) {
+        if (this.rb.velocity == Vector3.zero) {
             return;
         }
 
