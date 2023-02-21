@@ -6,6 +6,8 @@ using TMPro;
 
 public class HighscoreUI : MonoBehaviour {
 
+    public static HighscoreUI main;
+
     public Color32 currentScoreColour;
 
     private GameObject tableRowPrefab;
@@ -14,6 +16,10 @@ public class HighscoreUI : MonoBehaviour {
     private readonly int numberOfRows = 6;
     private readonly string prefsName = "score_";
     private readonly List<GameObject> rows = new List<GameObject>();
+
+    void Awake() {
+        HighscoreUI.main = this;
+    }
 
     void Start() {
         this.tableRowPrefab = Resources.Load<GameObject>("Prefabs/TableRow");
@@ -30,6 +36,12 @@ public class HighscoreUI : MonoBehaviour {
         UIController.main.ToggleHighscores(false);
         UIController.main.ToggleMainMenu(true);
         AudioController.main.PlayClip("select_action", Mixers.UI);
+    }
+
+    public void ResetHighscores() {
+        for (int i = 0; i < this.numberOfRows; i++) {
+            PlayerPrefs.SetInt(this.prefsName + i, 0);
+        }
     }
 
     private void RemoveRows() {

@@ -21,8 +21,17 @@ public class AudioController : MonoBehaviour {
     public static AudioController main;
 
     public AudioMixerGroup musicMixer;
+    public string musicMixerVolume;
+    [Space]
     public AudioMixerGroup sfxMixer;
+    public string sfxMixerVolume;
+    [Space]
     public AudioMixerGroup uiMixer;
+    public string uiMixerVolume;
+    [Space]
+
+    public int minVolume = -80;
+    public int maxVolume = 1;
 
     [Space]
     public SFXConfig[] SFXConfigs;
@@ -40,6 +49,10 @@ public class AudioController : MonoBehaviour {
         if (AudioController.main == null) {
             AudioController.main = this;
         }
+    }
+
+    void Start() {
+        this.UpdateVolumeLevels();
     }
 
     void Update() {
@@ -127,6 +140,25 @@ public class AudioController : MonoBehaviour {
             }
         }
         return null;
+    }
+
+    public void UpdateVolumeLevels() {
+        this.musicMixer.audioMixer.SetFloat(this.musicMixerVolume, this.NormalizeVolume(PlayerPrefs.GetFloat("volume_music")));
+        this.sfxMixer.audioMixer.SetFloat(this.sfxMixerVolume, this.NormalizeVolume(PlayerPrefs.GetFloat("volume_sfx")));
+        this.uiMixer.audioMixer.SetFloat(this.uiMixerVolume, this.NormalizeVolume(PlayerPrefs.GetFloat("volume_ui")));
+    }
+
+    public void PlayDebugSFX() {
+        this.PlayClip(this.SFXConfigs[0].name, Mixers.SFX);
+    }
+
+    public void PlayDebugUISound() {
+        this.PlayClip(this.SFXConfigs[0].name, Mixers.UI);
+    }
+
+    private float NormalizeVolume(float savedVolume) {
+        float diff = this.maxVolume - this.minVolume;
+        return this.minVolume + (diff * savedVolume);
     }
 
     private AudioSource FindFirstAvailableSource(Mixers mixer) {

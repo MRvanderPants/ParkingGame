@@ -13,6 +13,7 @@ public class UIController : MonoBehaviour {
     private Transform targetPanel;
     private Transform mainMenuPanel;
     private Transform highscorePanel;
+    private Transform settingsPanel;
 
     public GoalPanelUI GoalPanelUI {
         get => this.goalPanel.GetComponent<GoalPanelUI>();
@@ -23,11 +24,14 @@ public class UIController : MonoBehaviour {
     }
 
     void Start() {
+        SettingsUI.main.CreatePlayerPrefs();
         this.goalPanel = this.transform.Find("GoalPanel");
         this.targetPanel = this.transform.Find("TargetPanel");
         this.mainMenuPanel = this.transform.Find("MainMenuPanel");
         this.highscorePanel = this.transform.Find("HighScoresPanel");
+        this.settingsPanel = this.transform.Find("SettingsPanel");
         this.ToggleHighscores(false);
+        this.ToggleSettings(false);
         this.ToggleMainMenu(true);
     }
 
@@ -51,6 +55,22 @@ public class UIController : MonoBehaviour {
             this.highscorePanel.GetComponent<HighscoreUI>().Activate();
         } else {
             AudioController.main.StopMixer(Mixers.Music);
+        }
+    }
+
+    public void OpenSettings() {
+        this.ToggleSettings(true);
+    }
+
+    public void ToggleSettings(bool state) {
+        this.mainMenuPanel.gameObject.SetActive(!state);
+        this.settingsPanel.gameObject.SetActive(state);
+        if (state) {
+            SettingsUI.main.Activate();
+        }
+        else {
+            AudioController.main.StopMixer(Mixers.Music);
+            SettingsUI.main.Deactivate();
         }
     }
 }
