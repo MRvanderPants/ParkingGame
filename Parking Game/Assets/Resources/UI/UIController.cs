@@ -69,7 +69,6 @@ public class UIController : MonoBehaviour {
             SettingsUI.main.Activate();
         }
         else {
-            AudioController.main.StopMixer(Mixers.Music);
             SettingsUI.main.Deactivate();
         }
     }

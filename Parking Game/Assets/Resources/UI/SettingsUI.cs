@@ -49,6 +49,14 @@ public class SettingsUI : MonoBehaviour {
         }
     }
 
+    /**
+     *  Called from UI 
+     */
+    public void Close() {
+        this.Deactivate();
+        UIController.main.ToggleSettings(false);
+    }
+
     public void Deactivate() {
         this.generalPage.gameObject.SetActive(false);
         this.audioPage.gameObject.SetActive(false);
