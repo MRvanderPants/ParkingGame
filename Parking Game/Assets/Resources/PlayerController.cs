@@ -38,12 +38,14 @@ public class PlayerController : MonoBehaviour {
     [Header("Misc")]
     public float compassDistance = 1.5f;
     public float minimalInput = 0.5f;
+    public float initialWaitTime = 3f;
 
     private Transform model;
     private float targetDriftAngle = 0f;
     private float currentDriftAngle = 0f;
     private Rigidbody rb;
     private Car capturedCar;
+    private bool startupHolding = true;
     private bool isDrifting = false;
     private bool sfxThrottle = false;
     private bool playingLongSfx = false;
@@ -74,11 +76,15 @@ public class PlayerController : MonoBehaviour {
         this.model = this.transform.Find("Model");
         this.captureParticles = this.GetComponent<ParticleSystem>();
         this.wallHitParticlePrefab = Resources.Load<GameObject>("Particles/WallHitParticle");
+
+        TimerUI.main.StartTimer(this.initialWaitTime, () => {
+            this.startupHolding = false;
+        });
     }
 
     void FixedUpdate() {
         this.HandleCompasses();
-        if (!this.CanMove) {
+        if (!this.CanMove || this.startupHolding) {
             return;
         }
 
