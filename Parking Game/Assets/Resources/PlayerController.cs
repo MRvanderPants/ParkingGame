@@ -290,6 +290,13 @@ public class PlayerController : MonoBehaviour {
                 Destroy(particle);
             });
         }
+
+        if (collision.collider.gameObject.tag == "pickup") {
+            Destroy(collision.collider.gameObject);
+            AudioController.main.PlayClip("capture");
+            UIController.main.GoalPanelUI.AddTime(0.3f);
+            CameraController.main.Shake(0.25f, 0.125f, 1f);
+        }
     }
 
     private void HandleDrifting() {

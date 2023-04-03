@@ -23,6 +23,7 @@ public class LevelController : MonoBehaviour {
     private GoalPanelUI goalPanelUI;
     private TargetPanelUI targetPanelUI;
     private TrafficRoute[] targetRoutes;
+    private PickupSpawner[] pickupSpawners;
     private LevelData levelData;
     private int score = 0;
     private int levelIndex = 0;
@@ -84,6 +85,7 @@ public class LevelController : MonoBehaviour {
         this.CreateInitialLevelData();
         this.CreatePlayer();
         this.StartLevel();
+        this.pickupSpawners = GameObject.FindObjectsOfType<PickupSpawner>();
         AudioController.main.StopMixer(Mixers.Music);
         new TimedTrigger(2f, () => {
             AudioController.main.PlayMusic(this.LevelMusicIntro, this.LevelMusic, 0.3f);
@@ -142,6 +144,14 @@ public class LevelController : MonoBehaviour {
                     this.EndGame();
                 }
             });
+
+            if (goalData.goalType != GoalType.Stealth && goalData.goalType != GoalType.HyperMode) {
+                this.HandleSpawns(goalData);
+            } else {
+                for (int i = 0; i < this.pickupSpawners.Length; i++) {
+                    this.pickupSpawners[i].Clear();
+                }
+            }
         });
     }
 
@@ -195,5 +205,32 @@ public class LevelController : MonoBehaviour {
                 GoalType.CaptureTarget
             }
         };
+    }
+
+    private void HandleSpawns(GoalData goalData) {
+        new TimedTrigger(goalData.timeLimit * 0.33f, () => {
+            this.SpawnPickups(0.3f);
+        });
+
+        new TimedTrigger(goalData.timeLimit * 0.5f, () => {
+            this.SpawnPickups(0.1f);
+        });
+
+        new TimedTrigger(goalData.timeLimit * 0.75f, () => {
+            this.SpawnPickups(0.2f);
+        });
+
+        new TimedTrigger(goalData.timeLimit * 0.85f, () => {
+            this.SpawnPickups(0.3f);
+        });
+    }
+
+    private void SpawnPickups(float percentage) {
+        int total = Mathf.RoundToInt(this.pickupSpawners.Length * percentage);
+        for (int i = 0; i < total; i++) {
+            int r = UnityEngine.Random.Range(0, this.pickupSpawners.Length);
+            PickupSpawner spawner = this.pickupSpawners[r];
+            spawner.Spawn();
+        }
     }
 }
