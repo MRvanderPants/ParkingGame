@@ -280,23 +280,50 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void OnCollisionEnter(Collision collision) {
-        if (collision.collider.gameObject.tag == "environment") {
-            CameraController.main.Shake(0.25f, 0.125f, 2f);
-            Vector3 contactPoint = collision.contacts[0].point;
-            GameObject particle = Instantiate(this.wallHitParticlePrefab);
-            particle.transform.position = contactPoint;
-            this.HandleCollisionSFX();
-            new TimedTrigger(1.5f, () => {
-                Destroy(particle);
-            });
-        }
+        switch (collision.collider.gameObject.tag) {
+            case "environment":
+                CameraController.main.Shake(0.25f, 0.125f, 2f);
+                Vector3 contactPoint = collision.contacts[0].point;
+                GameObject particle = Instantiate(this.wallHitParticlePrefab);
+                particle.transform.position = contactPoint;
+                this.HandleCollisionSFX();
+                new TimedTrigger(1.5f, () => {
+                    Destroy(particle);
+                });
+                break;
 
-        if (collision.collider.gameObject.tag == "pickup") {
-            Destroy(collision.collider.gameObject);
-            AudioController.main.PlayClip("capture");
-            UIController.main.GoalPanelUI.AddTime(0.3f);
-            CameraController.main.Shake(0.25f, 0.125f, 1f);
+            case "pickup":
+                Destroy(collision.collider.gameObject);
+                AudioController.main.PlayClip("capture");
+                UIController.main.GoalPanelUI.AddTime(0.3f);
+                CameraController.main.Shake(0.25f, 0.125f, 1f);
+                break;
+
+            case "destructable":
+                Transform target = collision.collider.transform.parent.Find("target");
+                collision.collider.gameObject.GetComponent<BoxCollider>().enabled = false;
+                this.LaunchDestructable(target);
+                break;
+
+            default: break;
         }
+    }
+
+    private void LaunchDestructable(Transform target) {
+        target.transform.parent.GetComponent<Destructable>().SpawnPickup();
+        target.GetComponent<ParticleSystem>().Play();
+        Vector3 vector = PlayerController.main.transform.up;
+        vector.x += UnityEngine.Random.Range(-0.3f, 0.3f);
+        vector.y += UnityEngine.Random.Range(-0.3f, 0.3f);
+        Vector3 force2 = vector * 20f;
+        force2.z = -5f;
+        Rigidbody rb = target.GetComponent<Rigidbody>();
+        rb.isKinematic = false;
+        rb.AddForce(force2, ForceMode.Impulse);
+        AudioController.main.PlayClip(this.collisionSoundSFX[0], Mixers.SFX, 0.2f);
+        new TimedTrigger(2f, () => {
+            Destroy(target.gameObject);
+        });
     }
 
     private void HandleDrifting() {

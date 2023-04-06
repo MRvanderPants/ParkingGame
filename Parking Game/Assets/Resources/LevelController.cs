@@ -101,6 +101,12 @@ public class LevelController : MonoBehaviour {
         if (PlayerController.main.gameObject != null) {
             Destroy(PlayerController.main.gameObject);
         }
+
+        // Reset all destructables
+        Destructable[] destructables = GameObject.FindObjectsOfType<Destructable>();
+        for (int j = 0; j < destructables.Length; j++) {
+            destructables[j].Reset();
+        }
     }
 
     public void QuitGame() {
