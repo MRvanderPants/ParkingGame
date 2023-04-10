@@ -47,6 +47,7 @@ public class EnlargeBounce : MonoBehaviour {
                 this.callbacks[i]();
             }
             this.callbacks.Clear();
+            this.Scale = this.initialScale;
             Destroy(this);
         }
     }

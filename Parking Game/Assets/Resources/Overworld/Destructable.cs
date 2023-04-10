@@ -37,6 +37,7 @@ public class Destructable : MonoBehaviour {
         if (this.prefab != null) {
             GameObject obj = Instantiate(this.prefab);
             obj.transform.position = this.transform.position;
+            obj.transform.rotation = this.transform.rotation;
             Destroy(this.gameObject);
         }
     }
