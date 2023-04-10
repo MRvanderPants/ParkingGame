@@ -124,6 +124,7 @@ public class LevelController : MonoBehaviour {
     private void StartMission() {
         new TimedTrigger(0.05f, () => {
             GoalData goalData = MissionController.main.CurrentGoalData;
+            MissionStartUI.main.Display(goalData);
             if (goalData.goalType != GoalType.Stealth && goalData.goalType != GoalType.HyperMode) {
                 this.targetPanelUI.SetTarget(goalData);
                 this.ActivateRandomTargetRoute();

@@ -322,7 +322,9 @@ public class PlayerController : MonoBehaviour {
         rb.AddForce(force2, ForceMode.Impulse);
         AudioController.main.PlayClip(this.collisionSoundSFX[0], Mixers.SFX, 0.2f);
         new TimedTrigger(2f, () => {
-            Destroy(target.gameObject);
+            if (target.gameObject != null) {
+                Destroy(target.gameObject);
+            }
         });
     }
 
