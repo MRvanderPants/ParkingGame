@@ -34,6 +34,8 @@ public class BaseMissionSettings {
     public string description;
     public GoalType goalType;
     public Sprite icon;
+    [Tooltip("If set, overwrites the default music for the duration of the mission")]
+    public AudioClip overwriteMusic;
 
     [Header("Generation Settings")]
 
@@ -51,8 +53,14 @@ public class BaseMissionSettings {
     [Tooltip("The base amount of time the player gets for this mission")]
     public float baseDuration;
 
+    [Tooltip("Check this to ignore the automated mission shortening")]
+    public bool forceBaseDuration;
+
     [Tooltip("Whether the player should be unable to move once a car is captured")]
     public bool lockPlayerDuringCapture = true;
+
+    [Tooltip("Whether or not the score needs to be multiplied in this mode")]
+    public bool scoreMultiplierActive = false;
 }
 #endregion
 
@@ -80,9 +88,11 @@ public class MissionController : MonoBehaviour {
         MissionController.main = this;
     }
 
-    public List<GoalData> GenerateMissions(LevelData levelData) {
-        this.missions.AddRange(this.GenerateGoalData(levelData));
-        return this.missions;
+    public LevelData ResetLevelData(LevelData levelData, int levelIndex) {
+        LevelData lvlData = MissionController.main.UpdateLevelData(levelData, levelIndex);
+        this.ResetMissions();
+        this.GenerateMissions(lvlData);
+        return lvlData;
     }
 
     public bool EndMission() {
@@ -127,6 +137,16 @@ public class MissionController : MonoBehaviour {
         return Mathf.Max(1, missionCount);
     }
 
+    private void ResetMissions() {
+        this.missions.Clear();
+        this.lastGoalType = GoalType.CaptureTarget;
+    }
+
+    private List<GoalData> GenerateMissions(LevelData levelData) {
+        this.missions.AddRange(this.GenerateGoalData(levelData));
+        return this.missions;
+    }
+
     private GoalType GenerateGoalType(LevelData levelData) {
         int r = UnityEngine.Random.Range(0, levelData.availableTypes.Length);
         return levelData.availableTypes[r];
@@ -154,10 +174,27 @@ public class MissionController : MonoBehaviour {
                 targetColour = this.GenerateColor(),
             });
         }
+
+        // Check to see if we need to add hyper mode
+        BaseMissionSettings hyperModeSettings = this.GetMissionSettingsForType(GoalType.HyperMode);
+        if (levelData.levelIndex >= hyperModeSettings.minLevel) {
+            float hyperTimeLimit = this.CalculateTimeLimit(hyperModeSettings, levelData);
+            goalList.Add(new GoalData() {
+                goalType = GoalType.HyperMode,
+                value = 0,
+                timeLimit = hyperTimeLimit,
+                targetPrefab = Resources.Load<GameObject>("Prefabs/Car"),
+                targetColour = this.GenerateColor(),
+            });
+        }
         return goalList;
     }
 
     private float CalculateTimeLimit(BaseMissionSettings settings, LevelData levelData) {
+        if (settings.forceBaseDuration) {
+            return settings.baseDuration;
+        }
+
         return Mathf.Max(
             settings.baseDuration * (1f - (0.05f * levelData.levelIndex)),
             10f

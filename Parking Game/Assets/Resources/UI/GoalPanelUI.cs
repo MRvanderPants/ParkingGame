@@ -13,6 +13,7 @@ public class GoalPanelUI : MonoBehaviour {
 
     private RectTransform progressBar;
     private float animationSpeed = 0f;
+    private float currentLength = 0f;
     private Pulse pulse;
     private readonly List<Action<bool>> callbacks = new List<Action<bool>>();
     private TextMeshProUGUI scoreLabel;
@@ -58,9 +59,10 @@ public class GoalPanelUI : MonoBehaviour {
 
         title.text = settings.name;
         description.text = settings.description;
-        progressBar.localScale = new Vector3(1f, 1f, 1f);
+        this.progressBar.localScale = new Vector3(1f, 1f, 1f);
         icon.overrideSprite = settings.icon;
         this.animationSpeed = 1f / goalData.timeLimit;
+        this.currentLength = goalData.timeLimit;
         this.callbacks.Clear();
         this.callbacks.Add(callback);
 
@@ -78,5 +80,15 @@ public class GoalPanelUI : MonoBehaviour {
         this.levelLabel = this.transform.Find("BackPanel").Find("Main Panel").Find("LevelPanel").Find("Label").GetComponent<TextMeshProUGUI>();
         this.levelLabel.transform.parent.gameObject.AddComponent<EnlargeBounce>();
         this.levelLabel.text = level + " LVL";
+    }
+
+    public void AddTime(float duration) {
+        float length = this.currentLength * duration;
+        float x = this.transform.localScale.x + (1f / length);
+        if (x > 1f) {
+            x = 1f;
+        }
+        this.progressBar.localScale = new Vector3(x, 1f, 1f);
+        this.pulse.enabled = false;
     }
 }

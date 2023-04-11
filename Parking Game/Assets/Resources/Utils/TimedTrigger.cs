@@ -26,6 +26,7 @@ public class TimedTriggerMono : MonoBehaviour {
     public void Init(float delayTime, Action callback, bool loop, bool relative = false) {
         this.delayTime = delayTime;
         this.startTime = Time.time;
+        this.relative = relative;
         this.callback = callback;
         this.loop = loop;
     }

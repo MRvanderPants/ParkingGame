@@ -9,13 +9,32 @@ public enum Mixers {
     UI
 }
 
+[System.Serializable]
+public class SFXConfig {
+    public string name;
+    public AudioClip audioClip;
+    public float volume = 0.5f;
+}
+
 public class AudioController : MonoBehaviour {
 
     public static AudioController main;
 
     public AudioMixerGroup musicMixer;
+    public string musicMixerVolume;
+    [Space]
     public AudioMixerGroup sfxMixer;
+    public string sfxMixerVolume;
+    [Space]
     public AudioMixerGroup uiMixer;
+    public string uiMixerVolume;
+    [Space]
+
+    public int minVolume = -80;
+    public int maxVolume = 1;
+
+    [Space]
+    public SFXConfig[] SFXConfigs;
 
     private AudioSource activeMusicPlayer;
 
@@ -30,6 +49,10 @@ public class AudioController : MonoBehaviour {
         if (AudioController.main == null) {
             AudioController.main = this;
         }
+    }
+
+    void Start() {
+        this.UpdateVolumeLevels();
     }
 
     void Update() {
@@ -84,6 +107,11 @@ public class AudioController : MonoBehaviour {
         };
     }
 
+    public AudioSource PlayClip(string clipName, Mixers mixer = Mixers.SFX, bool looping = false) {
+        SFXConfig config = this.GetConfigByName(clipName);
+        return this.PlayClip(config.audioClip, mixer, config.volume, looping);
+    }
+
     public AudioSource PlayClip(AudioClip clip, Mixers mixer, float volume = 0.5f, bool looping = false) {
         AudioSource source = this.FindFirstAvailableSource(mixer);
         source.clip = clip;
@@ -103,6 +131,34 @@ public class AudioController : MonoBehaviour {
                 this.sources[i].Stop();
             }
         }
+    }
+
+    public SFXConfig GetConfigByName(string name) {
+        for (int i = 0; i < this.SFXConfigs.Length; i++) {
+            if (this.SFXConfigs[i].name == name) {
+                return this.SFXConfigs[i];
+            }
+        }
+        return null;
+    }
+
+    public void UpdateVolumeLevels() {
+        this.musicMixer.audioMixer.SetFloat(this.musicMixerVolume, this.NormalizeVolume(PlayerPrefs.GetFloat("volume_music")));
+        this.sfxMixer.audioMixer.SetFloat(this.sfxMixerVolume, this.NormalizeVolume(PlayerPrefs.GetFloat("volume_sfx")));
+        this.uiMixer.audioMixer.SetFloat(this.uiMixerVolume, this.NormalizeVolume(PlayerPrefs.GetFloat("volume_ui")));
+    }
+
+    public void PlayDebugSFX() {
+        this.PlayClip(this.SFXConfigs[0].name, Mixers.SFX);
+    }
+
+    public void PlayDebugUISound() {
+        this.PlayClip(this.SFXConfigs[0].name, Mixers.UI);
+    }
+
+    private float NormalizeVolume(float savedVolume) {
+        float diff = this.maxVolume - this.minVolume;
+        return this.minVolume + (diff * savedVolume);
     }
 
     private AudioSource FindFirstAvailableSource(Mixers mixer) {
@@ -158,7 +214,9 @@ public class AudioController : MonoBehaviour {
             }
         }
         for (int j = 0; j < toRemove.Count; j++) {
-            this.fadeSources.RemoveAt(toRemove[j]);
+            if (j <= this.fadeSources.Count) {
+                this.fadeSources.RemoveAt(toRemove[j]);
+            }
         }
     }
 }

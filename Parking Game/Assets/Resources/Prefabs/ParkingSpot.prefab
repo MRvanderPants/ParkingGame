@@ -71,7 +71,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1388975687
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: 1690986096, guid: d765ac01337fb2f47bc3426769311220, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -151,6 +151,10 @@ MonoBehaviour:
   collisionAdditionalSoundSFX:
   - {fileID: 8300000, guid: 8f601f0a342508c4d89fe019d131ee0f, type: 3}
   - {fileID: 8300000, guid: 4ac580fa8ad3b104a9331dbbc7ef3f7c, type: 3}
+  hyperModeScale: 2.5
+  hyperModeScaleSpeed: 1.025
+  hyperModeImpactDuration: 0.25
+  hyperModeBlinkDuration: 0.15
   compassDistance: 1.5
   minimalInput: 0.25
 --- !u!54 &2667280568565938742
@@ -221,8 +225,8 @@ ParticleSystemRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 213402009
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_RenderMode: 1
   m_MeshDistribution: 0

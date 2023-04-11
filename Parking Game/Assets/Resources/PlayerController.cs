@@ -28,15 +28,24 @@ public class PlayerController : MonoBehaviour {
     public AudioClip[] collisionSoundSFX;
     public AudioClip[] collisionAdditionalSoundSFX;
 
+    [Header("Hyper Mode")]
+    public float hyperModeScale = 2.5f;
+    public float hyperModeScaleSpeed = 1.025f;
+    public float hyperModeImpactDuration = 0.33f;
+    public float hyperModeBlinkDuration = 0.1f;
+    public int hyperModeBlinkAmount = 20;
+
     [Header("Misc")]
     public float compassDistance = 1.5f;
     public float minimalInput = 0.5f;
+    public float initialWaitTime = 3f;
 
     private Transform model;
     private float targetDriftAngle = 0f;
     private float currentDriftAngle = 0f;
     private Rigidbody rb;
     private Car capturedCar;
+    private bool startupHolding = true;
     private bool isDrifting = false;
     private bool sfxThrottle = false;
     private bool playingLongSfx = false;
@@ -67,11 +76,15 @@ public class PlayerController : MonoBehaviour {
         this.model = this.transform.Find("Model");
         this.captureParticles = this.GetComponent<ParticleSystem>();
         this.wallHitParticlePrefab = Resources.Load<GameObject>("Particles/WallHitParticle");
+
+        TimerUI.main.StartTimer(this.initialWaitTime, () => {
+            this.startupHolding = false;
+        });
     }
 
     void FixedUpdate() {
         this.HandleCompasses();
-        if (!this.CanMove) {
+        if (!this.CanMove || this.startupHolding) {
             return;
         }
 
@@ -92,16 +105,25 @@ public class PlayerController : MonoBehaviour {
         this.colliders.Remove(car);
     }
 
+    public void SetHyperMode(bool active) {
+        Vector3 newScale = Vector3.one * (active ? this.hyperModeScale : 1f);
+        DynamicScale ds = this.gameObject.AddComponent<DynamicScale>();
+        ds.Init(newScale, this.hyperModeScaleSpeed);
+
+        if (active) {
+            this.StartBlinker();
+        }
+    }
+
     private void HandleVerticalMovement(float horizontal, float vertical, bool drifting) {
         float speed = this.moveSpeed;
         if (horizontal != 0 && !drifting) {
             speed *= this.turnSpeedReduction;
         }
 
-        if (vertical > this.minimalInput) {
+        if (vertical >= 0) {
             this.rb.velocity = this.transform.up * speed;
-        }
-        else if (vertical < -this.minimalInput) {
+        } else if (vertical < -this.minimalInput) {
             this.rb.velocity = -this.transform.up * speed * this.backwardSpeedReduction;
         } else {
             this.rb.velocity = Vector3.zero;
@@ -109,7 +131,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void HandleHorizontalMovement(float horizontal, float vertical, bool drifting) {
-        if (vertical == 0 || this.rb.velocity == Vector3.zero) {
+        if (this.rb.velocity == Vector3.zero) {
             return;
         }
 
@@ -162,14 +184,19 @@ public class PlayerController : MonoBehaviour {
                 Vector3 myPos = this.transform.position; myPos.z = 0f;
                 Vector3 carPos = car.transform.position; carPos.z = 0f;
                 float distance = Vector3.Distance(myPos, carPos);
-                if (distance < this.minimalCatchDistance) {
+
+                GoalType goalType = MissionController.main.CurrentGoalData.goalType;
+                float catchDistance = goalType == GoalType.HyperMode
+                    ? this.minimalCatchDistance * this.hyperModeScale
+                    : this.minimalCatchDistance;
+
+                if (distance < catchDistance) {
                     this.CaptureCar(car);
                 }
             }
         }
     }
 
-    // TODO handle capturing for different game modes
     private void CaptureCar(Car car) {
         BaseMissionSettings missionSettings = MissionController.main.GetCurrentMissionSettings();
         if (missionSettings.lockPlayerDuringCapture) {
@@ -191,9 +218,15 @@ public class PlayerController : MonoBehaviour {
 
             // Mode to avoid cars for the duration of the mission
             case GoalType.Stealth:
+                AudioController.main.PlayClip("wrongCapture");
                 new TimedTrigger(1f, () => {
-                    LevelController.main.EndGame(false);
+                    this.ReleaseCar();
+                    LevelController.main.EndGame();
                 });
+                break;
+
+            case GoalType.HyperMode:
+                this.ResolveHyperCapture();
                 break;
 
             // Default mode to capture a specific car
@@ -208,9 +241,20 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    private void ResolveHyperCapture() {
+        AudioController.main.PlayClip("capture");
+        LevelController.main.Score += LevelController.main.LevelIndex;
+        this.capturedCar.PlayExplosionSFX();
+        new TimedTrigger(this.hyperModeImpactDuration, () => {
+            if (this.capturedCar != null) {
+                this.capturedCar.Launch();
+            }
+            this.capturedCar = null;
+        });
+    }
+
     private void ResolveValidCapture() {
-        AudioClip clickSFX = Resources.Load<AudioClip>("Audio/SFX/capture");
-        AudioController.main.PlayClip(clickSFX, Mixers.SFX);
+        AudioController.main.PlayClip("capture");
         TimerUI.main.StartTimer(this.targetCatchTime, () => {
             this.ReleaseCar();
             LevelController.main.EndMission();
@@ -219,10 +263,8 @@ public class PlayerController : MonoBehaviour {
 
     private void ResolveInvalidCapture() {
         LevelController.main.SpeedMultiplier = this.catchSpeedMultiplier;
-        AudioClip clickSFX = Resources.Load<AudioClip>("Audio/SFX/wrongCapture");
-        AudioController.main.PlayClip(clickSFX, Mixers.SFX);
-        AudioClip fastForwardSFX = Resources.Load<AudioClip>("Audio/SFX/fastForward");
-        AudioSource fastForwardSource = AudioController.main.PlayClip(fastForwardSFX, Mixers.SFX, 0.2f, true);
+        AudioController.main.PlayClip("wrongCapture");
+        AudioSource fastForwardSource = AudioController.main.PlayClip("fastForward", Mixers.SFX, true);
         TimerUI.main.StartTimer(this.invalidCatchTime, () => {
             LevelController.main.SpeedMultiplier = 1f;
             AudioController.main.FadeOutClip(fastForwardSource);
@@ -238,16 +280,52 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void OnCollisionEnter(Collision collision) {
-        if (collision.collider.gameObject.tag == "environment") {
-            CameraController.main.Shake(0.25f, 0.125f, 2f);
-            Vector3 contactPoint = collision.contacts[0].point;
-            GameObject particle = Instantiate(this.wallHitParticlePrefab);
-            particle.transform.position = contactPoint;
-            this.HandleCollisionSFX();
-            new TimedTrigger(1.5f, () => {
-                Destroy(particle);
-            });
+        switch (collision.collider.gameObject.tag) {
+            case "environment":
+                CameraController.main.Shake(0.25f, 0.125f, 2f);
+                Vector3 contactPoint = collision.contacts[0].point;
+                GameObject particle = Instantiate(this.wallHitParticlePrefab);
+                particle.transform.position = contactPoint;
+                this.HandleCollisionSFX();
+                new TimedTrigger(1.5f, () => {
+                    Destroy(particle);
+                });
+                break;
+
+            case "pickup":
+                Destroy(collision.collider.gameObject);
+                AudioController.main.PlayClip("capture");
+                UIController.main.GoalPanelUI.AddTime(0.3f);
+                CameraController.main.Shake(0.25f, 0.125f, 1f);
+                break;
+
+            case "destructable":
+                Transform target = collision.collider.transform.parent.Find("target");
+                collision.collider.gameObject.GetComponent<BoxCollider>().enabled = false;
+                this.LaunchDestructable(target);
+                break;
+
+            default: break;
         }
+    }
+
+    private void LaunchDestructable(Transform target) {
+        target.transform.parent.GetComponent<Destructable>().SpawnPickup();
+        target.GetComponent<ParticleSystem>().Play();
+        Vector3 vector = PlayerController.main.transform.up;
+        vector.x += UnityEngine.Random.Range(-0.3f, 0.3f);
+        vector.y += UnityEngine.Random.Range(-0.3f, 0.3f);
+        Vector3 force2 = vector * 20f;
+        force2.z = -5f;
+        Rigidbody rb = target.GetComponent<Rigidbody>();
+        rb.isKinematic = false;
+        rb.AddForce(force2, ForceMode.Impulse);
+        AudioController.main.PlayClip(this.collisionSoundSFX[0], Mixers.SFX, 0.2f);
+        new TimedTrigger(2f, () => {
+            if (target.gameObject != null) {
+                Destroy(target.gameObject);
+            }
+        });
     }
 
     private void HandleDrifting() {
@@ -273,14 +351,14 @@ public class PlayerController : MonoBehaviour {
         });
 
         int r0 = UnityEngine.Random.Range(0, this.collisionSoundSFX.Length);
-        AudioController.main.PlayClip(this.collisionSoundSFX[r0], Mixers.SFX, 0.2f);
+        AudioController.main.PlayClip(this.collisionSoundSFX[r0], Mixers.SFX, 0.1f);
 
         if (!this.playingLongSfx) {
             int r1 = UnityEngine.Random.Range(0, this.collisionAdditionalSoundSFX.Length);
             int r2 = UnityEngine.Random.Range(0, 10);
             if (r2 > 7) {
                 this.playingLongSfx = true;
-                AudioController.main.PlayClip(this.collisionAdditionalSoundSFX[r1], Mixers.SFX, 0.3f);
+                AudioController.main.PlayClip(this.collisionAdditionalSoundSFX[r1], Mixers.SFX, 0.2f);
                 new TimedTrigger(2f, () => {
                     this.playingLongSfx = false;
                 });
@@ -334,5 +412,18 @@ public class PlayerController : MonoBehaviour {
             Destroy(this.compasses[i]);
         }
         this.compasses.Clear();
+    }
+
+    private void StartBlinker() {
+        GoalData goalData = MissionController.main.CurrentGoalData;
+        float stopTime = Time.time + goalData.timeLimit;
+        new TimedTrigger(goalData.timeLimit * (1f - this.hyperModeBlinkDuration), () => {
+            Blinker blinker = this.model.gameObject.AddComponent<Blinker>();
+            blinker.Init(
+                stopTime,
+                this.hyperModeBlinkAmount,
+                this.model.GetComponent<SpriteRenderer>()
+            );
+        });
     }
 }

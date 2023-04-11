@@ -33,6 +33,9 @@ public class CameraController : MonoBehaviour {
     }
 
     public void Shake(float duration, float amount = 0.5f, float decreaseFactor = 1.25f) {
+        if (PlayerPrefs.GetInt("screen_shake_on") != 1) {
+            return;
+        }
         this.shakeAmount = amount;
         this.decreaseFactor = decreaseFactor;
         this.shake = duration;
