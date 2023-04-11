@@ -35,6 +35,10 @@ public class PlayerController : MonoBehaviour {
     public float hyperModeBlinkDuration = 0.1f;
     public int hyperModeBlinkAmount = 20;
 
+    [Header("Car Movement Mode")]
+    public float carMovementTimeMultiplier = 2f;
+    [Min(1)]public int carMovementChance = 2;
+
     [Header("Misc")]
     public float compassDistance = 1.5f;
     public float minimalInput = 0.5f;
@@ -174,13 +178,14 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void CheckForCapture() {
-        if (this.capturedCar != null || this.transform == null) {
+        bool carMoving = MissionController.main.CurrentGoalData.goalType == GoalType.CarMoving;
+        if ((!carMoving && this.capturedCar != null) || this.transform == null) {
             return;
         }
 
         for (int i = 0; i < this.colliders.Count; i++) {
             Car car = this.colliders[i];
-            if (car != null && !car.GetComponent<Car>().released) {
+            if (car != null && !car.GetComponent<Car>().released && (!carMoving || this.capturedCar != car)) {
                 Vector3 myPos = this.transform.position; myPos.z = 0f;
                 Vector3 carPos = car.transform.position; carPos.z = 0f;
                 float distance = Vector3.Distance(myPos, carPos);
@@ -203,9 +208,11 @@ public class PlayerController : MonoBehaviour {
             this.rb.velocity = Vector3.zero;
         }
 
-        this.capturedCar = car;
+        if (missionSettings.goalType != GoalType.CarMoving) {
+            this.capturedCar = car;
+            car.transform.position = this.transform.position;
+        }
         car.captured = true;
-        car.transform.position = this.transform.position;
 
         this.captureParticles.Play();
         CameraController.main.Shake(0.25f, 0.125f, 1f);
@@ -227,6 +234,10 @@ public class PlayerController : MonoBehaviour {
 
             case GoalType.HyperMode:
                 this.ResolveHyperCapture();
+                break;
+
+            case GoalType.CarMoving:
+                this.ResolveCarMovingCapture(car);
                 break;
 
             // Default mode to capture a specific car
@@ -253,8 +264,41 @@ public class PlayerController : MonoBehaviour {
         });
     }
 
+    private void ResolveCarMovingCapture(Car car) {
+        if (!car.released) {
+            car.released = true;
+            LevelController.main.Score -= LevelController.main.LevelIndex;
+            car.PlayExplosionSFX();
+            car.Launch();
+            CameraController.main.Shake(0.25f, 0.125f, 1f);
+            if (this.capturedCar) {
+                this.capturedCar.GetComponent<ParticleSystem>().Stop();
+            }
+        }
+    }
+
     private void ResolveValidCapture() {
         AudioController.main.PlayClip("capture");
+        GoalData goalData = MissionController.main.CurrentGoalData;
+        BaseMissionSettings baseMissionSettings = MissionController.main.GetMissionSettingsForType(GoalType.CarMoving);
+        int levelIndex = LevelController.main.LevelIndex;
+        if (levelIndex >= baseMissionSettings.minLevel) {
+            int r = UnityEngine.Random.Range(0, 10);
+            if (r < this.carMovementChance) {
+                LevelController.main.EndMission();
+                this.colliders.Remove(this.capturedCar);
+                this.capturedCar.transform.parent = this.transform;
+                this.capturedCar.transform.rotation = Quaternion.Euler(new Vector3(-90f, 0f, 180f));
+                this.capturedCar.GetComponent<BoxCollider>().enabled = false;
+
+                MissionController.main.InsertMission(new GoalData() {
+                    goalType = GoalType.CarMoving,
+                    timeLimit = goalData.timeLimit * this.carMovementTimeMultiplier,
+                    targetPrefab = Resources.Load<GameObject>("Prefabs/TargetArea"),
+                });
+                return;
+            }
+        }
         TimerUI.main.StartTimer(this.targetCatchTime, () => {
             this.ReleaseCar();
             LevelController.main.EndMission();
@@ -303,6 +347,14 @@ public class PlayerController : MonoBehaviour {
                 Transform target = collision.collider.transform.parent.Find("target");
                 collision.collider.gameObject.GetComponent<BoxCollider>().enabled = false;
                 this.LaunchDestructable(target);
+                break;
+
+            case "targetArea":
+                AudioController.main.PlayClip("capture");
+                LevelController.main.ClearTargetArea();
+                this.capturedCar.Release();
+                this.capturedCar = null;
+                LevelController.main.EndMission();
                 break;
 
             default: break;
@@ -368,10 +420,21 @@ public class PlayerController : MonoBehaviour {
 
     private void HandleCompasses() {
         Car[] targets = LevelController.main.TargetCars;
+        GoalType currentGoalType = MissionController.main.CurrentGoalData.goalType;
+        if (currentGoalType == GoalType.CarMoving && LevelController.main.targetArea) {
+            if (this.compasses.Count > 0) {
+                this.MoveCompasses();
+                return;
+            } else {
+                this.CreateCompasses();
+                return;
+            }
+        }
+
         if (targets.Length > 0 && targets.Length != this.compasses.Count) {
             this.RemoveAllCompasses();
             this.CreateCompasses(targets);
-        } else if (targets.Length > 0 && targets.Length == this.compasses.Count) { // targets.Length == this.lastTargetCount && 
+        } else if (targets.Length > 0 && targets.Length == this.compasses.Count && currentGoalType != GoalType.CarMoving) {
             this.MoveCompasses(targets);
         } else {
             this.RemoveAllCompasses();
@@ -386,6 +449,12 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
+    private void CreateCompasses() {
+        GameObject prefab = Resources.Load<GameObject>("Prefabs/Compass");
+        GameObject compass = Instantiate(prefab, this.transform);
+        this.compasses.Add(compass);
+    }
+
     private void MoveCompasses(Car[] targets) {
         for (int i = 0; i < targets.Length; i++) {
             GameObject compass = this.compasses[i];
@@ -397,6 +466,17 @@ public class PlayerController : MonoBehaviour {
             compass.transform.eulerAngles = eul;
             compass.transform.position += compass.transform.up * this.compassDistance;
         }
+    }
+
+    private void MoveCompasses() {
+        GameObject compass = this.compasses[0];
+        Transform target = LevelController.main.targetArea.transform;
+        compass.transform.position = this.transform.position;
+        float angle = this.GetAngle(compass.transform.position, target.transform.position) - 90f;
+        Vector3 eul = compass.transform.eulerAngles;
+        eul.z = angle;
+        compass.transform.eulerAngles = eul;
+        compass.transform.position += compass.transform.up * this.compassDistance;
     }
 
     private float GetAngle(Vector3 from, Vector3 to) {

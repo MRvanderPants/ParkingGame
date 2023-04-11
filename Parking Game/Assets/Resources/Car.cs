@@ -84,8 +84,10 @@ public class Car : MonoBehaviour {
         force2.z = -5f;
         this.rb.AddForce(force2, ForceMode.Impulse);
         new TimedTrigger(2f, () => {
-            this.onDestroy?.Invoke();
-            Destroy(this.gameObject);
+            if (this != null) {
+                this.onDestroy?.Invoke();
+                Destroy(this.gameObject);
+            }
         });
     }
 

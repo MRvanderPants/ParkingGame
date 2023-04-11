@@ -4,6 +4,7 @@ using UnityEngine;
 
 #region Type declarations
 public enum GoalType {
+    None,
     CaptureTarget,
     Stealth,
     Ticket,
@@ -17,7 +18,6 @@ public enum GoalType {
 [System.Serializable]
 public class GoalData {
     public GoalType goalType;
-    public int value;
     public float timeLimit;
     public GameObject targetPrefab;
     public Color32 targetColour;
@@ -137,6 +137,10 @@ public class MissionController : MonoBehaviour {
         return Mathf.Max(1, missionCount);
     }
 
+    public void InsertMission(GoalData goalData) {
+        this.missions.Insert(0, goalData);
+    }
+
     private void ResetMissions() {
         this.missions.Clear();
         this.lastGoalType = GoalType.CaptureTarget;
@@ -168,7 +172,6 @@ public class MissionController : MonoBehaviour {
             float timeLimit = this.CalculateTimeLimit(settings, levelData);
             goalList.Add(new GoalData() {
                 goalType = goalType,
-                value = 0,
                 timeLimit = timeLimit,
                 targetPrefab = Resources.Load<GameObject>("Prefabs/Car"),
                 targetColour = this.GenerateColor(),
@@ -181,7 +184,6 @@ public class MissionController : MonoBehaviour {
             float hyperTimeLimit = this.CalculateTimeLimit(hyperModeSettings, levelData);
             goalList.Add(new GoalData() {
                 goalType = GoalType.HyperMode,
-                value = 0,
                 timeLimit = hyperTimeLimit,
                 targetPrefab = Resources.Load<GameObject>("Prefabs/Car"),
                 targetColour = this.GenerateColor(),

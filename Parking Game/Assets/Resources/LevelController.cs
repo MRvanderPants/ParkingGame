@@ -16,6 +16,7 @@ public class LevelController : MonoBehaviour {
 
     public static LevelController main;
 
+    public GameObject targetArea;
     public AudioClip LevelMusic;
     public AudioClip LevelMusicIntro;
     public readonly Observable onMissionChange = new Observable();
@@ -125,7 +126,7 @@ public class LevelController : MonoBehaviour {
         new TimedTrigger(0.05f, () => {
             GoalData goalData = MissionController.main.CurrentGoalData;
             MissionStartUI.main.Display(goalData);
-            if (goalData.goalType != GoalType.Stealth && goalData.goalType != GoalType.HyperMode) {
+            if (goalData.goalType != GoalType.Stealth && goalData.goalType != GoalType.HyperMode && goalData.goalType != GoalType.CarMoving) {
                 this.targetPanelUI.SetTarget(goalData);
                 this.ActivateRandomTargetRoute();
             } else {
@@ -134,6 +135,10 @@ public class LevelController : MonoBehaviour {
 
             if (goalData.goalType == GoalType.HyperMode) {
                 PlayerController.main.SetHyperMode(true);
+            }
+
+            if (goalData.goalType == GoalType.CarMoving) {
+                this.CreateTargetArea(goalData);
             }
 
             BaseMissionSettings settings = MissionController.main.GetMissionSettingsForType(goalData.goalType);
@@ -169,6 +174,10 @@ public class LevelController : MonoBehaviour {
             PlayerController.main.SetHyperMode(false);
         }
 
+        if (goalData.goalType == GoalType.CarMoving) {
+            this.ClearTargetArea();
+        }
+
         BaseMissionSettings settings = MissionController.main.GetMissionSettingsForType(goalData.goalType);
         if (settings.overwriteMusic != null) {
             AudioController.main.PlayMusic(this.LevelMusicIntro, this.LevelMusic);
@@ -182,6 +191,11 @@ public class LevelController : MonoBehaviour {
         }
     }
     #endregion
+
+    public void ClearTargetArea() {
+        Destroy(this.targetArea);
+        this.targetArea = null;
+    }
 
     private void FindAllTargetRoutes() {
         TrafficRoute[] routes = GameObject.FindObjectsOfType<TrafficRoute>();
@@ -239,5 +253,30 @@ public class LevelController : MonoBehaviour {
             PickupSpawner spawner = this.pickupSpawners[r];
             spawner.Spawn();
         }
+    }
+
+    private void CreateTargetArea(GoalData goalData) {
+
+        // Collect all route-nodes within range
+        List<Transform> routeNodes = new List<Transform>();
+        for (int i = 0; i < this.targetRoutes.Length; i++) {
+            var route = this.targetRoutes[i];
+            for (int j = 0; j < route.nodes.Length; j++) {
+                Transform node = route.nodes[j];
+                float distance = Vector3.Distance(node.position, PlayerController.main.transform.position);
+                if (distance > 5 && distance < 25f) {
+                    routeNodes.Add(node);
+                }
+            }
+        }
+
+        // Decide on where to spawn the area
+        int r = UnityEngine.Random.Range(0, routeNodes.Count);
+        Transform obj = routeNodes[r];
+
+        // Create the area
+        GameObject area = Instantiate(goalData.targetPrefab);
+        area.transform.position = obj.transform.position; // TODO Replace with random location
+        this.targetArea = area;
     }
 }
