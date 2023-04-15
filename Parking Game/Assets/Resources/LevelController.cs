@@ -31,6 +31,8 @@ public class LevelController : MonoBehaviour {
     private float speedMultiplier = 1f;
     private bool gameEnded = false;
 
+    private List<TimedTrigger> spawnTriggers = new List<TimedTrigger>();
+
     #region Getters and setters
     public float SpeedMultiplier {
         get => this.speedMultiplier;
@@ -172,10 +174,16 @@ public class LevelController : MonoBehaviour {
             });
 
             if (goalData.goalType != GoalType.Stealth && goalData.goalType != GoalType.HyperMode) {
-                this.HandleSpawns(goalData);
+                this.ClearSpawnTriggers();
+                this.spawnTriggers = this.HandleSpawns(goalData);
             } else {
                 for (int i = 0; i < this.pickupSpawners.Length; i++) {
                     this.pickupSpawners[i].Clear();
+                }
+
+                GameObject[] pickups = GameObject.FindGameObjectsWithTag("pickup");
+                for (int j = 0; j < pickups.Length; j++) {
+                    Destroy(pickups[j]);
                 }
             }
         });
@@ -242,22 +250,30 @@ public class LevelController : MonoBehaviour {
         };
     }
 
-    private void HandleSpawns(GoalData goalData) {
-        new TimedTrigger(goalData.timeLimit * 0.33f, () => {
-            this.SpawnPickups(0.3f);
-        });
+    private List<TimedTrigger> HandleSpawns(GoalData goalData) {
+        return new List<TimedTrigger>() {
+            new TimedTrigger(goalData.timeLimit * 0.33f, () => {
+                this.SpawnPickups(0.3f);
+            }),
 
-        new TimedTrigger(goalData.timeLimit * 0.5f, () => {
-            this.SpawnPickups(0.1f);
-        });
+            new TimedTrigger(goalData.timeLimit * 0.5f, () => {
+                this.SpawnPickups(0.1f);
+            }),
 
-        new TimedTrigger(goalData.timeLimit * 0.75f, () => {
-            this.SpawnPickups(0.2f);
-        });
+            new TimedTrigger(goalData.timeLimit * 0.75f, () => {
+                this.SpawnPickups(0.2f);
+            }),
 
-        new TimedTrigger(goalData.timeLimit * 0.85f, () => {
-            this.SpawnPickups(0.3f);
-        });
+            new TimedTrigger(goalData.timeLimit * 0.85f, () => {
+                this.SpawnPickups(0.3f);
+            }),
+        };
+    }
+
+    private void ClearSpawnTriggers() {
+        for (int i = 0; i < this.spawnTriggers.Count; i++) {
+            this.spawnTriggers[i].Destroy();
+        }
     }
 
     private void SpawnPickups(float percentage) {

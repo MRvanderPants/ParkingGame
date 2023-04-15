@@ -14,6 +14,7 @@ public class UIController : MonoBehaviour {
     private Transform mainMenuPanel;
     private Transform highscorePanel;
     private Transform settingsPanel;
+    private Transform pausePanel;
 
     public GoalPanelUI GoalPanelUI {
         get => this.goalPanel.GetComponent<GoalPanelUI>();
@@ -30,9 +31,23 @@ public class UIController : MonoBehaviour {
         this.mainMenuPanel = this.transform.Find("MainMenuPanel");
         this.highscorePanel = this.transform.Find("HighScoresPanel");
         this.settingsPanel = this.transform.Find("SettingsPanel");
+        this.pausePanel = this.transform.Find("PausePanel");
+        this.TogglePause(false);
         this.ToggleHighscores(false);
         this.ToggleSettings(false);
         this.ToggleMainMenu(true);
+    }
+
+    void Update() {
+        if (Input.GetButtonDown("Pause")) {
+            this.TogglePause(Time.timeScale > 0);
+            if (Time.timeScale > 0) {
+                Time.timeScale = 0;
+            }
+            else {
+                Time.timeScale = 1;
+            }
+        }
     }
 
     public void ToggleMainMenu(bool state) {
@@ -69,5 +84,9 @@ public class UIController : MonoBehaviour {
         else {
             SettingsUI.main.Deactivate();
         }
+    }
+
+    public void TogglePause(bool state) {
+        this.pausePanel.gameObject.SetActive(state);
     }
 }
