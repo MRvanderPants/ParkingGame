@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour {
     public float targetCatchTime = 0.5f;
     public float invalidCatchTime = 2f;
     public float catchSpeedMultiplier = 5f;
+    public float missionStartCaptureDelay = 2f;
 
     [Header("SFX")]
     public AudioClip driftingStartSFX;
@@ -51,6 +52,7 @@ public class PlayerController : MonoBehaviour {
     private Car capturedCar;
     private bool startupHolding = true;
     private bool isDrifting = false;
+    private bool isCaptureDisabled = false;
     private bool sfxThrottle = false;
     private bool playingLongSfx = false;
     private ParticleSystem captureParticles;
@@ -94,7 +96,7 @@ public class PlayerController : MonoBehaviour {
 
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
-        this.isDrifting = Input.GetButton("Fire1");
+        this.isDrifting = Input.GetButton("Fire1") || Input.GetButton("Fire2") || Input.GetButton("Fire3");
         this.HandleDrifting();
         this.HandleHorizontalMovement(horizontal, vertical, this.isDrifting);
         this.HandleVerticalMovement(horizontal, vertical, this.isDrifting);
@@ -117,6 +119,13 @@ public class PlayerController : MonoBehaviour {
         if (active) {
             this.StartBlinker();
         }
+    }
+
+    public void DisableCaptureTemporarily() {
+        this.isCaptureDisabled = true;
+        new TimedTrigger(this.missionStartCaptureDelay, () => {
+            this.isCaptureDisabled = false;
+        });
     }
 
     private void HandleVerticalMovement(float horizontal, float vertical, bool drifting) {
@@ -179,7 +188,7 @@ public class PlayerController : MonoBehaviour {
 
     private void CheckForCapture() {
         bool carMoving = MissionController.main.CurrentGoalData.goalType == GoalType.CarMoving;
-        if ((!carMoving && this.capturedCar != null) || this.transform == null) {
+        if ((!carMoving && this.capturedCar != null) || this.transform == null || this.isCaptureDisabled) {
             return;
         }
 

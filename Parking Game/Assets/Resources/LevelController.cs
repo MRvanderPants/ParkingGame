@@ -126,19 +126,33 @@ public class LevelController : MonoBehaviour {
         new TimedTrigger(0.05f, () => {
             GoalData goalData = MissionController.main.CurrentGoalData;
             MissionStartUI.main.Display(goalData);
-            if (goalData.goalType != GoalType.Stealth && goalData.goalType != GoalType.HyperMode && goalData.goalType != GoalType.CarMoving) {
-                this.targetPanelUI.SetTarget(goalData);
-                this.ActivateRandomTargetRoute();
-            } else {
-                this.targetPanelUI.Hide();
-            }
+            //if (goalData.goalType != GoalType.Stealth && goalData.goalType != GoalType.HyperMode && goalData.goalType != GoalType.CarMoving) {
+            //    this.targetPanelUI.SetTarget(goalData);
+            //    this.ActivateRandomTargetRoute();
+            //} else {
+            //    this.targetPanelUI.Hide();
+            //}
 
-            if (goalData.goalType == GoalType.HyperMode) {
-                PlayerController.main.SetHyperMode(true);
-            }
+            switch(goalData.goalType) {
+                case GoalType.HyperMode:
+                    PlayerController.main.SetHyperMode(true);
+                    this.targetPanelUI.Hide();
+                    break;
 
-            if (goalData.goalType == GoalType.CarMoving) {
-                this.CreateTargetArea(goalData);
+                case GoalType.CarMoving:
+                    this.CreateTargetArea(goalData);
+                    this.targetPanelUI.Hide();
+                    break;
+
+                case GoalType.Stealth:
+                    PlayerController.main.DisableCaptureTemporarily();
+                    this.targetPanelUI.Hide();
+                    break;
+
+                default:
+                    this.targetPanelUI.SetTarget(goalData);
+                    this.ActivateRandomTargetRoute();
+                    break;
             }
 
             BaseMissionSettings settings = MissionController.main.GetMissionSettingsForType(goalData.goalType);

@@ -46,7 +46,7 @@ public class TrafficRoute : MonoBehaviour {
             LevelController.main.onMissionChange.Subscribe((object data) => {
                 GoalData goalData = (GoalData)data;
                 if (this.routeType != TrafficRouteType.Target) {
-                    switch(goalData.goalType) {
+                    switch (goalData.goalType) {
                         case GoalType.HyperMode:
                             this.hyperModeTrigger = new LevelControlledTimedTrigger(this.minimalSpawnTime * this.hyperMultiplier, () => {
                                 this.SpawnCar(true);
@@ -59,12 +59,22 @@ public class TrafficRoute : MonoBehaviour {
                             }, true);
                             break;
 
-                        default: break;
+                        default:
+                            if (this.hyperModeTrigger != null) {
+                                this.hyperModeTrigger.Destroy();
+                            }
+                            if (this.stealthModeModeTrigger != null) {
+                                this.stealthModeModeTrigger.Destroy();
+                            }
+                            break;
                     }
-                } else if (this.hyperModeTrigger != null) {
-                    this.hyperModeTrigger.Destroy();
-                } else if (this.stealthModeModeTrigger != null) {
-                    this.stealthModeModeTrigger.Destroy();
+                } else {
+                    if (this.hyperModeTrigger != null) {
+                        this.hyperModeTrigger.Destroy();
+                    }
+                    if (this.stealthModeModeTrigger != null) {
+                        this.stealthModeModeTrigger.Destroy();
+                    }
                 }
             });
         }
@@ -131,6 +141,11 @@ public class TrafficRoute : MonoBehaviour {
             this.lineRenderer.enabled = true;
             this.start.GetComponent<MeshRenderer>().enabled = true;
             this.end.GetComponent<MeshRenderer>().enabled = true;
+
+            for (int i = 0; i < this.nodes.Length; i++) {
+                Vector3 pos = this.nodes[i].transform.position;
+                this.nodes[i].gameObject.name = pos.x + "/" + pos.y;
+            }
         }
 
         this.lineRenderer.positionCount = this.nodes.Length + 2;
