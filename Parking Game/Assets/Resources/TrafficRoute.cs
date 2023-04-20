@@ -69,12 +69,7 @@ public class TrafficRoute : MonoBehaviour {
                             break;
                     }
                 } else {
-                    if (this.hyperModeTrigger != null) {
-                        this.hyperModeTrigger.Destroy();
-                    }
-                    if (this.stealthModeModeTrigger != null) {
-                        this.stealthModeModeTrigger.Destroy();
-                    }
+                    this.StopExtraSpawning();
                 }
             });
         }
@@ -83,6 +78,15 @@ public class TrafficRoute : MonoBehaviour {
     void Update() {
         this.FetchObjects();
         this.DrawLine();
+    }
+
+    public void StopExtraSpawning() {
+        if (this.hyperModeTrigger != null) {
+            this.hyperModeTrigger.Destroy();
+        }
+        if (this.stealthModeModeTrigger != null) {
+            this.stealthModeModeTrigger.Destroy();
+        }
     }
 
     public void SpawnCar(bool isExtraCar = false) {

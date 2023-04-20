@@ -308,6 +308,7 @@ public class PlayerController : MonoBehaviour {
                 return;
             }
         }
+
         TimerUI.main.StartTimer(this.targetCatchTime, () => {
             this.ReleaseCar();
             LevelController.main.EndMission();
@@ -371,7 +372,10 @@ public class PlayerController : MonoBehaviour {
     }
 
     private void LaunchDestructable(Transform target) {
-        target.transform.parent.GetComponent<Destructable>().SpawnPickup();
+        int r = UnityEngine.Random.Range(0, 10);
+        if (r < 3) {
+            target.transform.parent.GetComponent<Destructable>().SpawnPickup();
+        }
         target.GetComponent<ParticleSystem>().Play();
         Vector3 vector = PlayerController.main.transform.up;
         vector.x += UnityEngine.Random.Range(-0.3f, 0.3f);
@@ -383,7 +387,7 @@ public class PlayerController : MonoBehaviour {
         rb.AddForce(force2, ForceMode.Impulse);
         AudioController.main.PlayClip(this.collisionSoundSFX[0], Mixers.SFX, 0.2f);
         new TimedTrigger(2f, () => {
-            if (target.gameObject != null) {
+            if (target != null && target.gameObject != null) {
                 Destroy(target.gameObject);
             }
         });
@@ -429,6 +433,13 @@ public class PlayerController : MonoBehaviour {
 
     private void HandleCompasses() {
         Car[] targets = LevelController.main.TargetCars;
+        List<Car> cars = new List<Car>();
+        for (int i = 0; i < targets.Length; i++) {
+            if (!targets[i].released) {
+                cars.Add(targets[i]);
+            }
+        }
+
         GoalType currentGoalType = MissionController.main.CurrentGoalData.goalType;
         if (currentGoalType == GoalType.CarMoving && LevelController.main.targetArea) {
             if (this.compasses.Count > 0) {
@@ -440,11 +451,11 @@ public class PlayerController : MonoBehaviour {
             }
         }
 
-        if (targets.Length > 0 && targets.Length != this.compasses.Count) {
+        if (cars.Count > 0 && cars.Count != this.compasses.Count) {
             this.RemoveAllCompasses();
-            this.CreateCompasses(targets);
-        } else if (targets.Length > 0 && targets.Length == this.compasses.Count && currentGoalType != GoalType.CarMoving) {
-            this.MoveCompasses(targets);
+            this.CreateCompasses(cars.ToArray());
+        } else if (cars.Count > 0 && cars.Count == this.compasses.Count && currentGoalType != GoalType.CarMoving) {
+            this.MoveCompasses(cars.ToArray());
         } else {
             this.RemoveAllCompasses();
         }

@@ -63,7 +63,8 @@ public class UIController : MonoBehaviour {
 
     public void ToggleHighscores(bool state) {
         this.highscorePanel.gameObject.SetActive(state);
-        if(state) {
+        if (state) {
+            this.goalPanel.gameObject.SetActive(false);
             AudioController.main.PlayMusic(this.HighscoreMusic);
             this.highscorePanel.GetComponent<HighscoreUI>().Activate();
         } else {

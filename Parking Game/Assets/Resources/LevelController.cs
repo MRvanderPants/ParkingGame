@@ -95,12 +95,33 @@ public class LevelController : MonoBehaviour {
         });
     }
 
+    // Called from UI
+    public void RestartGame() {
+        UIController.main.TogglePause(false);
+        Time.timeScale = 1;
+        this.EndMission();
+        this.EndGame();
+    }
+
+    // Called from UI
+    public void Resume() {
+        UIController.main.TogglePause(false);
+        Time.timeScale = 1;
+    }
+
     public void EndGame() {
         this.gameEnded = true;
         UIController.main.ToggleHighscores(true);
         for (int i = 0; i < this.targetRoutes.Length; i++) {
             this.targetRoutes[i].RemoveAllCars();
         }
+
+        TrafficRoute[] routes = GameObject.FindObjectsOfType<TrafficRoute>();
+        for (int i = 0; i < routes.Length; i++) {
+            routes[i].StopExtraSpawning();
+            routes[i].RemoveAllCars();
+        }
+
         if (PlayerController.main.gameObject != null) {
             Destroy(PlayerController.main.gameObject);
         }

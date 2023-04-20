@@ -152,8 +152,16 @@ public class MissionController : MonoBehaviour {
     }
 
     private GoalType GenerateGoalType(LevelData levelData) {
-        int r = UnityEngine.Random.Range(0, levelData.availableTypes.Length);
-        return levelData.availableTypes[r];
+        GoalType[] types = levelData.availableTypes;
+        List<GoalType> availableTypes = new List<GoalType>();
+        for (int i = 0; i < types.Length; i++) {
+            BaseMissionSettings settings = this.GetMissionSettingsForType(types[i]);
+            if (types[i] != this.lastGoalType || !settings.notInARow) {
+                availableTypes.Add(types[i]);
+            }
+        }
+        int r = UnityEngine.Random.Range(0, availableTypes.Count);
+        return availableTypes[r];
     }
 
     private Color32 GenerateColor() {
