@@ -121,9 +121,10 @@ public class PlayerController : MonoBehaviour {
         }
     }
 
-    public void DisableCaptureTemporarily() {
+    public void DisableCaptureTemporarily(float delay = -1f) {
         this.isCaptureDisabled = true;
-        new TimedTrigger(this.missionStartCaptureDelay, () => {
+        float time = delay == -1f ? this.missionStartCaptureDelay : delay;
+        new TimedTrigger(time, () => {
             this.isCaptureDisabled = false;
         });
     }
@@ -331,6 +332,7 @@ public class PlayerController : MonoBehaviour {
         new TimedTrigger(this.targetCatchTime, () => {
             this.capturedCar = null;
         });
+        this.DisableCaptureTemporarily(1f);
     }
 
     private void OnCollisionEnter(Collision collision) {
